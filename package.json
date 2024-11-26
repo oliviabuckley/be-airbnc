@@ -1,0 +1,21 @@
+{
+  "name": "be-airbnc",
+  "version": "1.0.0",
+  "description": "This project is a backend implementation for a platform similar to airbnb, designed to allow users to view a list property rentals which are available to book.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Olivia Buckley",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.1"
+  }
+}
