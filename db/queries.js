@@ -1,7 +1,7 @@
 exports.createUsersQuery = `CREATE TABLE users(
 user_id SERIAL PRIMARY KEY, 
 first_name VARCHAR NOT NULL,
-second_name VARCHAR NOT NULL,
+surname VARCHAR NOT NULL,
 email VARCHAR NOT NULL,
 phone_number VARCHAR, 
 role VARCHAR CHECK (role IN ('host', 'guest')) NOT NULL,
@@ -17,8 +17,8 @@ property_id SERIAL PRIMARY KEY,
 host_id INT NOT NULL,
 name VARCHAR NOT NULL,
 location VARCHAR NOT NULL,
-property_type VARCHAR NO NULL,
-price_per_night DECIMAL
+property_type VARCHAR NOT NULL,
+price_per_night DECIMAL,
 description TEXT,
 FOREIGN KEY (host_id) REFERENCES users(user_id) ON DELETE CASCADE,
 FOREIGN KEY (property_type) REFERENCES property_types(property_type) ON DELETE RESTRICT);`;

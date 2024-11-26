@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup-db": "psql -f ./db/data/setup-db.sql",
+    "seed": "node ./db/run-seed.js",
     "test": "jest"
   },
   "keywords": [],
@@ -17,6 +18,7 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "pg-format": "^1.0.4"
   }
 }
