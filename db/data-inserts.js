@@ -1,8 +1,9 @@
 const db = require("./connection");
 const format = require("pg-format");
+const { createRef, formatProperties } = require("./utils");
 
-function insertUsers(users) {
-  return db.query(
+async function insertUsers(users) {
+  const insertedUsers = await db.query(
     format(
       `INSERT INTO users (first_name, surname, email, phone_number, role, avatar) VALUES %L RETURNING *`,
       users.map(
@@ -17,9 +18,10 @@ function insertUsers(users) {
       )
     )
   );
+  return insertedUsers.rows;
 }
 
-function insertPropertyTypes(propertyTypes) {
+async function insertPropertyTypes(propertyTypes) {
   return db.query(
     format(
       `INSERT INTO property_types (property_type, description) VALUES %L RETURNING *`,
@@ -31,18 +33,13 @@ function insertPropertyTypes(propertyTypes) {
   );
 }
 
-function insertProperties(properties, users) {
-  const propertiesWithHostIds = properties.map((property) => {
-    const host = users.find((user) => user.role === "host");
-    return {
-      ...property,
-      host_id: host ? host.user_id : null,
-    };
-  });
+async function insertProperties(properties, insertedUsers) {
+  const userRef = createRef(insertedUsers);
+  const formattedProperties = formatProperties(properties, userRef);
   return db.query(
     format(
       `INSERT INTO properties (host_id, name, location, property_type, price_per_night, description) VALUES %L RETURNING *`,
-      propertiesWithHostIds.map(
+      formattedProperties.map(
         ({
           host_id,
           name,
