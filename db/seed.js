@@ -7,9 +7,9 @@ const {
 
 async function seed(users, propertyTypes, properties) {
   await manageTables();
-  await insertUsers(users);
+  const insertedUsers = await insertUsers(users);
   await insertPropertyTypes(propertyTypes);
-  await insertProperties(properties, users);
+  await insertProperties(properties, insertedUsers);
 }
 
 module.exports = seed;
