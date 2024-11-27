@@ -10,6 +10,7 @@ const createRef = (insertedUsers) => {
 const formatProperties = (properties, refObj) => {
   return properties.map((property) => {
     const hostId = refObj[property.host_name];
+    delete property.host_name;
     return { ...property, host_id: hostId };
   });
 };
