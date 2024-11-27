@@ -60,4 +60,8 @@ async function insertProperties(properties, insertedUsers) {
   );
 }
 
-module.exports = { insertUsers, insertPropertyTypes, insertProperties };
+module.exports = {
+  insertUsers,
+  insertPropertyTypes,
+  insertProperties,
+};

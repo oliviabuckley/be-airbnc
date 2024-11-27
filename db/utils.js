@@ -7,9 +7,9 @@ const createRef = (insertedUsers) => {
   return userRef;
 };
 
-const formatProperties = (properties, refObj) => {
+const formatProperties = (properties, userRef) => {
   return properties.map((property) => {
-    const hostId = refObj[property.host_name];
+    const hostId = userRef[property.host_name];
     delete property.host_name;
     return { ...property, host_id: hostId };
   });

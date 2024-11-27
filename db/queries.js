@@ -22,3 +22,20 @@ price_per_night DECIMAL,
 description TEXT,
 FOREIGN KEY (host_id) REFERENCES users(user_id) ON DELETE CASCADE,
 FOREIGN KEY (property_type) REFERENCES property_types(property_type) ON DELETE RESTRICT);`;
+
+exports.createFavouritesQuery = `CREATE TABLE favourites(
+favourite_id SERIAL PRIMARY KEY,
+guest_id INT NOT NULL,
+property_id INT NOT NULL,
+FOREIGN KEY (guest_id) REFERENCES users(user_id) ON DELETE CASCADE,
+FOREIGN KEY (property_id) REFERENCES properties(property_id));`;
+
+exports.createReviewsQuery = `CREATE TABLE reviews(
+reviews_id SERIAL PRIMARY KEY,
+property_id INT NOT NULL,
+guest_id INT NOT NULL, 
+rating INT NOT NULL,
+comment TEXT,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (property_id) REFERENCES properties(property_id),
+FOREIGN KEY (guest_id) REFERENCES users(user_id));`;
