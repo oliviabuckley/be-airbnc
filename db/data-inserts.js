@@ -1,6 +1,12 @@
 const db = require("./connection");
 const format = require("pg-format");
-const { createRef, formatProperties } = require("./utils");
+const {
+  createUserRef,
+  createPropertyRef,
+  formatProperties,
+  formatFavourites,
+  formatReviews,
+} = require("./utils");
 
 async function insertUsers(users) {
   const insertedUsers = await db.query(
@@ -34,9 +40,9 @@ async function insertPropertyTypes(propertyTypes) {
 }
 
 async function insertProperties(properties, insertedUsers) {
-  const userRef = createRef(insertedUsers);
+  const userRef = createUserRef(insertedUsers);
   const formattedProperties = formatProperties(properties, userRef);
-  return db.query(
+  const insertedProperties = await db.query(
     format(
       `INSERT INTO properties (host_id, name, location, property_type, price_per_night, description) VALUES %L RETURNING *`,
       formattedProperties.map(
@@ -58,10 +64,56 @@ async function insertProperties(properties, insertedUsers) {
       )
     )
   );
+  return insertedProperties.rows;
+}
+
+async function insertFavourites(favourites, insertedUsers, insertedProperties) {
+  const userRef = createUserRef(insertedUsers);
+  const propertyRef = createPropertyRef(insertedProperties);
+  const formattedFavourites = formatFavourites(
+    favourites,
+    userRef,
+    propertyRef
+  );
+  const insertedFavourites = await db.query(
+    format(
+      `INSERT INTO favourites (guest_id, property_id) VALUES %L RETURNING *`,
+      formattedFavourites.map(({ guest_id, property_id }) => [
+        guest_id,
+        property_id,
+      ])
+    )
+  );
+
+  return insertedFavourites.rows;
+}
+
+async function insertReviews(reviews, insertedUsers, insertedProperties) {
+  const userRef = createUserRef(insertedUsers);
+  const propertyRef = createPropertyRef(insertedProperties);
+  const formattedReviews = formatReviews(reviews, userRef, propertyRef);
+  const insertedReviews = await db.query(
+    format(
+      `INSERT INTO reviews (property_id, guest_id, rating, comment, created_at) VALUES %L RETURNING *`,
+      formattedReviews.map(
+        ({ property_id, guest_id, rating, comment, created_at }) => [
+          property_id,
+          guest_id,
+          rating,
+          comment,
+          created_at,
+        ]
+      )
+    )
+  );
+
+  return insertedReviews.rows;
 }
 
 module.exports = {
   insertUsers,
   insertPropertyTypes,
   insertProperties,
+  insertFavourites,
+  insertReviews,
 };
