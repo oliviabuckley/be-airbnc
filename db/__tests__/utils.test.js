@@ -173,7 +173,16 @@ describe("formatProperties", () => {
       },
     ];
     const userRef = { "Alice Johnson": 1 };
-    const originalProperties = [...properties];
+    const originalProperties = [
+      {
+        name: "Modern Apartment in City Center",
+        property_type: "Apartment",
+        location: "London, UK",
+        price_per_night: 120.0,
+        description: "Description of Modern Apartment in City Center.",
+        host_name: "Alice Johnson",
+      },
+    ];
     formatProperties(properties, userRef);
     expect(properties).toEqual(originalProperties);
   });
@@ -264,7 +273,12 @@ describe("formatFavourites", () => {
     ];
     const userRef = { "Bob Smith": 1 };
     const propertyRef = { "Modern Apartment in City Center": 1 };
-    const originalFavourites = [...favourites];
+    const originalFavourites = [
+      {
+        guest_name: "Bob Smith",
+        property_name: "Modern Apartment in City Center",
+      },
+    ];
     formatFavourites(favourites, userRef, propertyRef);
     expect(favourites).toEqual(originalFavourites);
   });
@@ -353,7 +367,14 @@ describe("formatReviews", () => {
     ];
     const userRef = { "Frank White": 1 };
     const propertyRef = { "Chic Studio Near the Beach": 1 };
-    const originalReviews = [...reviews];
+    const originalReviews = [
+      {
+        guest_name: "Frank White",
+        property_name: "Chic Studio Near the Beach",
+        rating: 4,
+        comment: "Great location and cosy space, perfect for a beach getaway.",
+      },
+    ];
     formatReviews(reviews, userRef, propertyRef);
     expect(reviews).toEqual(originalReviews);
   });
