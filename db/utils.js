@@ -16,30 +16,25 @@ const createPropertyRef = (insertedProperties) => {
 };
 
 const formatProperties = (properties, userRef) => {
-  return properties.map((property) => {
-    const hostId = userRef[property.host_name];
-    delete property.host_name;
-    return { ...property, host_id: hostId };
+  return properties.map(({ host_name, ...rest }) => {
+    const hostId = userRef[host_name];
+    return { ...rest, host_id: hostId };
   });
 };
 
 const formatFavourites = (favourites, userRef, propertyRef) => {
-  return favourites.map((favourite) => {
-    const guestId = userRef[favourite.guest_name];
-    const propertyId = propertyRef[favourite.property_name];
-    delete favourite.guest_name;
-    delete favourite.property_name;
-    return { ...favourite, guest_id: guestId, property_id: propertyId };
+  return favourites.map(({ guest_name, property_name }) => {
+    const guestId = userRef[guest_name];
+    const propertyId = propertyRef[property_name];
+    return { guest_id: guestId, property_id: propertyId };
   });
 };
 
 const formatReviews = (reviews, userRef, propertyRef) => {
-  return reviews.map((review) => {
-    const guestId = userRef[review.guest_name];
-    const propertyId = propertyRef[review.property_name];
-    delete review.guest_name;
-    delete review.property_name;
-    return { ...review, guest_id: guestId, property_id: propertyId };
+  return reviews.map(({ guest_name, property_name, ...rest }) => {
+    const guestId = userRef[guest_name];
+    const propertyId = propertyRef[property_name];
+    return { ...rest, guest_id: guestId, property_id: propertyId };
   });
 };
 

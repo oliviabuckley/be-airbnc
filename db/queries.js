@@ -9,8 +9,8 @@ avatar VARCHAR,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`;
 
 exports.createPropertyTypesQuery = `CREATE TABLE property_types(
-property_type VARCHAR PRIMARY KEY,
-description TEXT);`;
+property_type VARCHAR PRIMARY KEY NOT NULL,
+description TEXT NOT NULL);`;
 
 exports.createPropertiesQuery = `CREATE TABLE properties(
 property_id SERIAL PRIMARY KEY,
@@ -18,7 +18,7 @@ host_id INT NOT NULL,
 name VARCHAR NOT NULL,
 location VARCHAR NOT NULL,
 property_type VARCHAR NOT NULL,
-price_per_night DECIMAL,
+price_per_night DECIMAL NOT NULL,
 description TEXT,
 FOREIGN KEY (host_id) REFERENCES users(user_id) ON DELETE CASCADE,
 FOREIGN KEY (property_type) REFERENCES property_types(property_type) ON DELETE RESTRICT);`;
