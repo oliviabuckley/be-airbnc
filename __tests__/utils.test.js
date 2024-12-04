@@ -4,7 +4,7 @@ const {
   formatProperties,
   formatFavourites,
   formatReviews,
-} = require("../utils");
+} = require("../db/utils");
 
 describe("createUserRef", () => {
   test("returns object", () => {
