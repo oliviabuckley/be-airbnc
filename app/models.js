@@ -91,4 +91,32 @@ async function fetchProperties(
   return properties.rows;
 }
 
-module.exports = { fetchProperties };
+async function fetchPropertyById(id) {
+  let queryStr = `SELECT 
+  properties.property_id,
+  properties.name AS property_name,
+  properties.location,
+  properties.price_per_night,
+  properties.description,
+  CONCAT(users.first_name, ' ', users.surname) AS host,
+  users.avatar AS host_avatar,
+  COUNT(favourites.property_id) AS favourites
+FROM properties
+JOIN users ON properties.host_id = users.user_id
+LEFT JOIN favourites ON properties.property_id = favourites.property_id
+WHERE properties.property_id = $1
+GROUP BY properties.property_id, users.first_name, users.surname, users.avatar;`;
+
+  const property = await db.query(queryStr, [id]);
+
+  if (property.rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `property with ID ${id} not found`,
+    });
+  }
+
+  return property.rows[0];
+}
+
+module.exports = { fetchProperties, fetchPropertyById };

@@ -226,4 +226,43 @@ describe("app", () => {
       });
     });
   });
+  describe("/api/properties/:id", () => {
+    describe("happy path", () => {
+      describe("GET", () => {
+        test("200 - responds with property object", () => {
+          return request(app)
+            .get(`/api/properties/1`)
+            .expect(200)
+            .then(({ body: { property } }) => {
+              expect(typeof property).toBe("object");
+            });
+        });
+        test("property object has the correct properties", () => {
+          return request(app)
+            .get("/api/properties/1")
+            .then(({ body: { property } }) => {
+              expect(property).toHaveProperty("property_id");
+              expect(property).toHaveProperty("property_name");
+              expect(property).toHaveProperty("location");
+              expect(property).toHaveProperty("price_per_night");
+              expect(property).toHaveProperty("host");
+              expect(property).toHaveProperty("favourites");
+              expect(property).toHaveProperty("host_avatar");
+            });
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("404 - property does not exist", () => {
+          return request(app)
+            .get("/api/properties/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("property with ID 1000 not found");
+            });
+        });
+      });
+    });
+  });
 });
