@@ -1,4 +1,4 @@
-const { fetchProperties } = require("./models");
+const { fetchProperties, fetchPropertyById } = require("./models");
 
 const getProperties = async (req, res, next) => {
   try {
@@ -23,4 +23,14 @@ const getProperties = async (req, res, next) => {
   }
 };
 
-module.exports = { getProperties };
+const getPropertyById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const property = await fetchPropertyById(id);
+    res.status(200).send({ property });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getProperties, getPropertyById };
