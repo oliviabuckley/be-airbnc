@@ -234,43 +234,142 @@ describe("app", () => {
       });
     });
   });
-});
-
-describe("/api/properties/:id", () => {
-  describe("happy path", () => {
-    describe("GET", () => {
-      test("200 - responds with property object", () => {
-        return request(app)
-          .get(`/api/properties/1`)
-          .expect(200)
-          .then(({ body: { property } }) => {
-            expect(typeof property).toBe("object");
-          });
+  describe("/api/properties/:id", () => {
+    describe("happy path", () => {
+      describe("GET", () => {
+        test("200 - responds with property object", () => {
+          return request(app)
+            .get(`/api/properties/1`)
+            .expect(200)
+            .then(({ body: { property } }) => {
+              expect(typeof property).toBe("object");
+            });
+        });
+        test("property object has the correct properties", () => {
+          return request(app)
+            .get("/api/properties/1")
+            .then(({ body: { property } }) => {
+              expect(property).toHaveProperty("property_id");
+              expect(property).toHaveProperty("property_name");
+              expect(property).toHaveProperty("location");
+              expect(property).toHaveProperty("price_per_night");
+              expect(property).toHaveProperty("host");
+              expect(property).toHaveProperty("favourites");
+              expect(property).toHaveProperty("host_avatar");
+            });
+        });
       });
-      test("property object has the correct properties", () => {
-        return request(app)
-          .get("/api/properties/1")
-          .then(({ body: { property } }) => {
-            expect(property).toHaveProperty("property_id");
-            expect(property).toHaveProperty("property_name");
-            expect(property).toHaveProperty("location");
-            expect(property).toHaveProperty("price_per_night");
-            expect(property).toHaveProperty("host");
-            expect(property).toHaveProperty("favourites");
-            expect(property).toHaveProperty("host_avatar");
-          });
+    });
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("404 - property does not exist", () => {
+          return request(app)
+            .get("/api/properties/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("property with ID 1000 not found");
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["delete", "post", "put", "patch"];
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method]("/api/properties/:id")
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
       });
     });
   });
-  describe("sad path", () => {
-    describe("GET", () => {
-      test("404 - property does not exist", () => {
-        return request(app)
-          .get("/api/properties/1000")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("property with ID 1000 not found");
-          });
+  describe("api/properties/:id/reviews", () => {
+    describe("happy path", () => {
+      describe("GET", () => {
+        test("200 - responds with an array of review objects", () => {
+          const propertyId = 1;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(200)
+            .then(({ body: { propertyReviews } }) => {
+              expect(Array.isArray(propertyReviews)).toBe(true);
+              propertyReviews.forEach((propertyReview) => {
+                expect(typeof propertyReview).toBe("object");
+              });
+            });
+        });
+        test("each review object has the correct properties", () => {
+          const propertyId = 1;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .then(({ body: { propertyReviews } }) => {
+              propertyReviews.forEach((propertyReview) => {
+                expect(propertyReview).toHaveProperty("review_id");
+                expect(propertyReview).toHaveProperty("comment");
+                expect(propertyReview).toHaveProperty("rating");
+                expect(propertyReview).toHaveProperty("created_at");
+                expect(propertyReview).toHaveProperty("guest");
+                expect(propertyReview).toHaveProperty("guest_avatar");
+              });
+            });
+        });
+        test("orders reviews by newest to oldest by default", () => {
+          const propertyId = 1;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(200)
+            .then(({ body: { propertyReviews } }) => {
+              expect(propertyReviews).toBeSortedBy("created_at", {
+                descending: true,
+              });
+            });
+        });
+        test("response includes average rating", () => {
+          const propertyId = 1;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toHaveProperty("average_rating");
+              expect(typeof body.average_rating).toBe("number");
+              expect(body.average_rating).toBeCloseTo(
+                parseFloat(body.average_rating),
+                1
+              );
+            });
+        });
+        test("average rating is correct", () => {
+          const propertyId = 1;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(200)
+            .then(({ body: { propertyReviews, average_rating } }) => {
+              const expectedAvgRating =
+                propertyReviews.reduce(
+                  (acc, review) => acc + review.rating,
+                  0
+                ) / propertyReviews.length;
+              expect(average_rating).toBeCloseTo(expectedAvgRating, 1);
+            });
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("404 - property does not exist", () => {
+          const propertyId = 10000000;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`property with ID ${propertyId} not found`);
+            });
+        });
       });
     });
   });

@@ -1,4 +1,8 @@
-const { fetchProperties, fetchPropertyById } = require("./models");
+const {
+  fetchProperties,
+  fetchPropertyById,
+  fetchReviewsByPropertyId,
+} = require("./models");
 
 const getProperties = async (req, res, next) => {
   try {
@@ -33,4 +37,19 @@ const getPropertyById = async (req, res, next) => {
   }
 };
 
-module.exports = { getProperties, getPropertyById };
+const getReviewsByPropertyId = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const { propertyReviews, average_rating } = await fetchReviewsByPropertyId(
+      id
+    );
+    res.status(200).send({
+      propertyReviews,
+      average_rating,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getProperties, getPropertyById, getReviewsByPropertyId };
