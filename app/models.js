@@ -53,7 +53,7 @@ async function fetchProperties(
     properties.location,
     properties.price_per_night,
     CONCAT(users.first_name, ' ', users.surname) AS host,
-    COUNT(favourites.property_id) AS favourites
+    CAST(COUNT(favourites.property_id) AS INTEGER) AS favourites
     FROM properties
     JOIN users ON properties.host_id = users.user_id
     LEFT JOIN favourites ON properties.property_id = favourites.property_id`;
@@ -100,7 +100,7 @@ async function fetchPropertyById(id) {
   properties.description,
   CONCAT(users.first_name, ' ', users.surname) AS host,
   users.avatar AS host_avatar,
-  COUNT(favourites.property_id) AS favourites
+  CAST(COUNT(favourites.property_id) AS INTEGER) AS favourites
 FROM properties
 JOIN users ON properties.host_id = users.user_id
 LEFT JOIN favourites ON properties.property_id = favourites.property_id
