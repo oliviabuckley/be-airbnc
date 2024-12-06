@@ -58,12 +58,10 @@ describe("app", () => {
         test("properties are ordered by favourites (most to least) by default", () => {
           return request(app)
             .get("/api/properties")
+            .expect(200)
             .then(({ body: { properties } }) => {
-              properties.forEach((property) => {
-                property.favourites = Number(property.favourites);
-                expect(properties).toBeSortedBy("favourites", {
-                  descending: true,
-                });
+              expect(properties).toBeSortedBy("favourites", {
+                descending: true,
               });
             });
         });
