@@ -119,4 +119,40 @@ GROUP BY properties.property_id, users.first_name, users.surname, users.avatar;`
   return property.rows[0];
 }
 
-module.exports = { fetchProperties, fetchPropertyById };
+async function fetchReviewsByPropertyId(id) {
+  let queryStr = `SELECT reviews.review_id,
+  reviews.comment,
+  reviews.rating,
+  reviews.created_at,
+  CONCAT(users.first_name, ' ', users.surname) AS guest,
+  users.avatar AS guest_avatar
+  FROM reviews
+  JOIN users ON reviews.guest_id = users.user_id
+ JOIN properties ON reviews.property_id = properties.property_id
+WHERE properties.property_id = $1
+ORDER BY reviews.created_at DESC;`;
+
+  const averageRatingQueryStr = `
+    SELECT AVG(rating) AS average_rating
+    FROM reviews
+    WHERE property_id = $1;`;
+
+  const propertyReviewsResult = await db.query(queryStr, [id]);
+  const averageRatingResult = await db.query(averageRatingQueryStr, [id]);
+
+  const propertyReviews = propertyReviewsResult.rows;
+  const averageRating =
+    averageRatingResult.rows.length > 0
+      ? averageRatingResult.rows[0].average_rating
+      : null;
+
+  const averageRatingRounded = parseFloat(averageRating).toFixed(1);
+
+  return { propertyReviews, average_rating: Number(averageRatingRounded) };
+}
+
+module.exports = {
+  fetchProperties,
+  fetchPropertyById,
+  fetchReviewsByPropertyId,
+};

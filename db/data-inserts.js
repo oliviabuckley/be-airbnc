@@ -94,19 +94,15 @@ async function insertReviews(reviews, insertedUsers, insertedProperties) {
   const formattedReviews = formatReviews(reviews, userRef, propertyRef);
   const insertedReviews = await db.query(
     format(
-      `INSERT INTO reviews (property_id, guest_id, rating, comment, created_at) VALUES %L RETURNING *`,
-      formattedReviews.map(
-        ({ property_id, guest_id, rating, comment, created_at }) => [
-          property_id,
-          guest_id,
-          rating,
-          comment,
-          created_at,
-        ]
-      )
+      `INSERT INTO reviews (property_id, guest_id, rating, comment) VALUES %L RETURNING *`,
+      formattedReviews.map(({ property_id, guest_id, rating, comment }) => [
+        property_id,
+        guest_id,
+        rating,
+        comment,
+      ])
     )
   );
-
   return insertedReviews.rows;
 }
 

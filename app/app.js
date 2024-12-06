@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
-const { getProperties, getPropertyById } = require("./controllers");
+const {
+  getProperties,
+  getPropertyById,
+  getReviewsByPropertyId,
+} = require("./controllers");
 const {
   handlePathNotFound,
   handleMethodNotAllowed,
@@ -9,7 +13,12 @@ const {
 
 app.route("/api/properties").get(getProperties).all(handleMethodNotAllowed);
 
-app.route("/api/properties/:id").get(getPropertyById);
+app
+  .route("/api/properties/:id")
+  .get(getPropertyById)
+  .all(handleMethodNotAllowed);
+
+app.route("/api/properties/:id/reviews").get(getReviewsByPropertyId);
 
 app.all("/*", handlePathNotFound);
 
