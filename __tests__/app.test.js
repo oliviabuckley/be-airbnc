@@ -174,67 +174,68 @@ describe("app", () => {
         });
       });
     });
-  });
-});
-describe("sad path", () => {
-  describe("GET", () => {
-    test("400 - invalid maxPrice", () => {
-      return request(app)
-        .get("/api/properties?maxPrice=NaN")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("maxPrice must be a number");
-        });
-    });
-    test("400 - invalid minPrice", () => {
-      return request(app)
-        .get("/api/properties?minPrice=NaN")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("minPrice must be a number");
-        });
-    });
-    test("400 - invalid sortBy column", () => {
-      return request(app)
-        .get("/api/properties?sortBy=invalidSortByColumn")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("invalid sortBy or order");
-        });
-    });
-    test("400 - invalid order value", () => {
-      return request(app)
-        .get("/api/properties?order=invalidOrderValue")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("invalid sortBy or order");
-        });
-    });
-    test("404 - host does not exist", () => {
-      return request(app)
-        .get("/api/properties?host=1000")
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("host with ID 1000 not found");
-        });
-    });
-  });
-  describe("invalid methods", () => {
-    test("405 - method not allowed", () => {
-      const methods = ["delete", "post", "put", "patch"];
-      return Promise.all(
-        methods.map((method) => {
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("400 - invalid maxPrice", () => {
           return request(app)
-            [method]("/api/properties")
-            .expect(405)
+            .get("/api/properties?maxPrice=NaN")
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).toBe("method not allowed");
+              expect(msg).toBe("maxPrice must be a number");
             });
-        })
-      );
+        });
+        test("400 - invalid minPrice", () => {
+          return request(app)
+            .get("/api/properties?minPrice=NaN")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("minPrice must be a number");
+            });
+        });
+        test("400 - invalid sortBy column", () => {
+          return request(app)
+            .get("/api/properties?sortBy=invalidSortByColumn")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("invalid sortBy or order");
+            });
+        });
+        test("400 - invalid order value", () => {
+          return request(app)
+            .get("/api/properties?order=invalidOrderValue")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("invalid sortBy or order");
+            });
+        });
+        test("404 - host does not exist", () => {
+          return request(app)
+            .get("/api/properties?host=1000")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("host with ID 1000 not found");
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["delete", "post", "put", "patch"];
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method]("/api/properties")
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
     });
   });
 });
+
 describe("/api/properties/:id", () => {
   describe("happy path", () => {
     describe("GET", () => {
