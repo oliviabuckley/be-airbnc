@@ -173,93 +173,103 @@ describe("app", () => {
           });
         });
       });
-      describe("DELETE", () => {
-        test("405 - method not allowed", () => {
-          return request(app).delete("/api/properties").expect(405);
-        });
-      });
     });
-    describe("sad path", () => {
-      describe("GET", () => {
-        test("400 - invalid maxPrice", () => {
+  });
+});
+describe("sad path", () => {
+  describe("GET", () => {
+    test("400 - invalid maxPrice", () => {
+      return request(app)
+        .get("/api/properties?maxPrice=NaN")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("maxPrice must be a number");
+        });
+    });
+    test("400 - invalid minPrice", () => {
+      return request(app)
+        .get("/api/properties?minPrice=NaN")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("minPrice must be a number");
+        });
+    });
+    test("400 - invalid sortBy column", () => {
+      return request(app)
+        .get("/api/properties?sortBy=invalidSortByColumn")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("invalid sortBy or order");
+        });
+    });
+    test("400 - invalid order value", () => {
+      return request(app)
+        .get("/api/properties?order=invalidOrderValue")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("invalid sortBy or order");
+        });
+    });
+    test("404 - host does not exist", () => {
+      return request(app)
+        .get("/api/properties?host=1000")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("host with ID 1000 not found");
+        });
+    });
+  });
+  describe("invalid methods", () => {
+    test("405 - method not allowed", () => {
+      const methods = ["delete", "post", "put", "patch"];
+      return Promise.all(
+        methods.map((method) => {
           return request(app)
-            .get("/api/properties?maxPrice=NaN")
-            .expect(400)
+            [method]("/api/properties")
+            .expect(405)
             .then(({ body: { msg } }) => {
-              expect(msg).toBe("maxPrice must be a number");
+              expect(msg).toBe("method not allowed");
             });
-        });
-        test("400 - invalid minPrice", () => {
-          return request(app)
-            .get("/api/properties?minPrice=NaN")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).toBe("minPrice must be a number");
-            });
-        });
-        test("400 - invalid sortBy column", () => {
-          return request(app)
-            .get("/api/properties?sortBy=invalidSortByColumn")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).toBe("invalid sortBy or order");
-            });
-        });
-        test("400 - invalid order value", () => {
-          return request(app)
-            .get("/api/properties?order=invalidOrderValue")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).toBe("invalid sortBy or order");
-            });
-        });
-        test("404 - host does not exist", () => {
-          return request(app)
-            .get("/api/properties?host=1000")
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).toBe("host with ID 1000 not found");
-            });
-        });
+        })
+      );
+    });
+  });
+});
+describe("/api/properties/:id", () => {
+  describe("happy path", () => {
+    describe("GET", () => {
+      test("200 - responds with property object", () => {
+        return request(app)
+          .get(`/api/properties/1`)
+          .expect(200)
+          .then(({ body: { property } }) => {
+            expect(typeof property).toBe("object");
+          });
+      });
+      test("property object has the correct properties", () => {
+        return request(app)
+          .get("/api/properties/1")
+          .then(({ body: { property } }) => {
+            expect(property).toHaveProperty("property_id");
+            expect(property).toHaveProperty("property_name");
+            expect(property).toHaveProperty("location");
+            expect(property).toHaveProperty("price_per_night");
+            expect(property).toHaveProperty("host");
+            expect(property).toHaveProperty("favourites");
+            expect(property).toHaveProperty("host_avatar");
+          });
       });
     });
   });
-  describe("/api/properties/:id", () => {
-    describe("happy path", () => {
-      describe("GET", () => {
-        test("200 - responds with property object", () => {
-          return request(app)
-            .get(`/api/properties/1`)
-            .expect(200)
-            .then(({ body: { property } }) => {
-              expect(typeof property).toBe("object");
-            });
-        });
-        test("property object has the correct properties", () => {
-          return request(app)
-            .get("/api/properties/1")
-            .then(({ body: { property } }) => {
-              expect(property).toHaveProperty("property_id");
-              expect(property).toHaveProperty("property_name");
-              expect(property).toHaveProperty("location");
-              expect(property).toHaveProperty("price_per_night");
-              expect(property).toHaveProperty("host");
-              expect(property).toHaveProperty("favourites");
-              expect(property).toHaveProperty("host_avatar");
-            });
-        });
-      });
-    });
-    describe("sad path", () => {
-      describe("GET", () => {
-        test("404 - property does not exist", () => {
-          return request(app)
-            .get("/api/properties/1000")
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).toBe("property with ID 1000 not found");
-            });
-        });
+  describe("sad path", () => {
+    describe("GET", () => {
+      test("404 - property does not exist", () => {
+        return request(app)
+          .get("/api/properties/1000")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("property with ID 1000 not found");
+          });
       });
     });
   });

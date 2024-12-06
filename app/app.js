@@ -7,7 +7,7 @@ const {
   handleCustomErrors,
 } = require("./errors");
 
-app.route("/api/properties").get(getProperties).delete(handleMethodNotAllowed);
+app.route("/api/properties").get(getProperties).all(handleMethodNotAllowed);
 
 app.route("/api/properties/:id").get(getPropertyById);
 
