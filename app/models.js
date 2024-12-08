@@ -185,6 +185,18 @@ async function addPropertyReview(id, propertyReview) {
     });
   }
 
+  const existingReview = await db.query(
+    `SELECT * FROM reviews WHERE property_id = $1 AND guest_id = $2`,
+    [id, guest_id]
+  );
+
+  if (existingReview.rows.length > 0) {
+    return Promise.reject({
+      status: 400,
+      msg: "guest has already reviewed this property",
+    });
+  }
+
   const addedPropertyReview = await db.query(
     `INSERT INTO reviews(
     property_id, 

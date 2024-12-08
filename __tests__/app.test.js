@@ -360,7 +360,7 @@ describe("app", () => {
       });
       describe("POST", () => {
         test("201 - responds with the new review object", () => {
-          const propertyId = 1;
+          const propertyId = 3;
           const propertyReview = {
             guest_id: 2,
             rating: 4,
@@ -464,6 +464,21 @@ describe("app", () => {
               expect(body.msg).toBe(
                 "guest with ID 1000 not found or not a guest"
               );
+            });
+        });
+        test("400 - guest cannot review same property twice", () => {
+          const propertyId = 1;
+          const propertyReview = {
+            guest_id: 2,
+            rating: 4,
+            comment: "Great property!",
+          };
+          return request(app)
+            .post(`/api/properties/${propertyId}/reviews`)
+            .send(propertyReview)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("guest has already reviewed this property");
             });
         });
       });
