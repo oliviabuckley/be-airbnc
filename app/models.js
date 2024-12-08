@@ -120,6 +120,7 @@ GROUP BY properties.property_id, users.first_name, users.surname, users.avatar;`
 }
 
 async function fetchReviewsByPropertyId(id) {
+  await fetchPropertyById(id);
   let queryStr = `SELECT reviews.review_id,
   reviews.comment,
   reviews.rating,
@@ -141,6 +142,14 @@ ORDER BY reviews.created_at DESC;`;
   const averageRatingResult = await db.query(averageRatingQueryStr, [id]);
 
   const propertyReviews = propertyReviewsResult.rows;
+
+  if (propertyReviews.length === 0) {
+    return Promise.reject({
+      status: 200,
+      msg: "there are no reviews for this property yet",
+    });
+  }
+
   const averageRating =
     averageRatingResult.rows.length > 0
       ? averageRatingResult.rows[0].average_rating

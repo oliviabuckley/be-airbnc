@@ -370,6 +370,33 @@ describe("app", () => {
               expect(body.msg).toBe(`property with ID ${propertyId} not found`);
             });
         });
+        test("200 - no reviews for this property", () => {
+          const propertyId = 2;
+          return request(app)
+            .get(`/api/properties/${propertyId}/reviews`)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.msg).toBe(
+                "there are no reviews for this property yet"
+              );
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const propertyId = 1;
+          const methods = ["put", "patch"];
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method](`/api/properties/${propertyId}/reviews`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
       });
     });
   });
