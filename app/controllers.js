@@ -2,6 +2,7 @@ const {
   fetchProperties,
   fetchPropertyById,
   fetchReviewsByPropertyId,
+  addPropertyReview,
 } = require("./models");
 
 const getProperties = async (req, res, next) => {
@@ -52,4 +53,20 @@ const getReviewsByPropertyId = async (req, res, next) => {
   }
 };
 
-module.exports = { getProperties, getPropertyById, getReviewsByPropertyId };
+const postPropertyReview = async (req, res, next) => {
+  const { id } = req.params;
+  const propertyReview = req.body;
+  try {
+    const postedPropertyReview = await addPropertyReview(id, propertyReview);
+    res.status(201).send(postedPropertyReview);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  getProperties,
+  getPropertyById,
+  getReviewsByPropertyId,
+  postPropertyReview,
+};

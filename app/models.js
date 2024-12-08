@@ -160,8 +160,49 @@ ORDER BY reviews.created_at DESC;`;
   return { propertyReviews, average_rating: Number(averageRatingRounded) };
 }
 
+async function addPropertyReview(id, propertyReview) {
+  const { guest_id, rating, comment } = propertyReview;
+
+  if (!guest_id || rating === undefined || !comment) {
+    return Promise.reject({ status: 400, msg: "missing required fields" });
+  }
+
+  const guestCheck = await db.query(
+    "SELECT * FROM users WHERE user_id = $1 AND role = $2",
+    [guest_id, "guest"]
+  );
+  if (guestCheck.rows.length === 0) {
+    return Promise.reject({
+      status: 400,
+      msg: `guest with ID ${guest_id} not found or not a guest`,
+    });
+  }
+
+  if (rating < 1 || rating > 5) {
+    return Promise.reject({
+      status: 400,
+      msg: "rating must be between 1 and 5",
+    });
+  }
+
+  const addedPropertyReview = await db.query(
+    `INSERT INTO reviews(
+    property_id, 
+    guest_id, 
+    rating,
+    comment, 
+    created_at) 
+    VALUES(
+    $1, $2, $3, $4, NOW())
+    RETURNING *`,
+    [id, guest_id, rating, comment]
+  );
+  return addedPropertyReview.rows[0];
+}
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
   fetchReviewsByPropertyId,
+  addPropertyReview,
 };

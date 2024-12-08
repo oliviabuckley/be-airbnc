@@ -358,6 +358,26 @@ describe("app", () => {
             });
         });
       });
+      describe("POST", () => {
+        test("201 - responds with the new review object", () => {
+          const propertyId = 1;
+          const propertyReview = {
+            guest_id: 2,
+            rating: 4,
+            comment: "Great property!",
+          };
+          return request(app)
+            .post(`/api/properties/${propertyId}/reviews`)
+            .send(propertyReview)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body.guest_id).toBe(propertyReview.guest_id);
+              expect(body.rating).toBe(propertyReview.rating);
+              expect(body.comment).toBe(propertyReview.comment);
+              expect(body.created_at).toBeDefined();
+            });
+        });
+      });
     });
     describe("sad path", () => {
       describe("GET", () => {
@@ -382,20 +402,69 @@ describe("app", () => {
             });
         });
       });
-      describe("invalid methods", () => {
-        test("405 - method not allowed", () => {
+      describe("POST", () => {
+        test("400 - missing required fields", () => {
           const propertyId = 1;
-          const methods = ["put", "patch"];
+          const propertyReviewList = [
+            {
+              rating: 4,
+              comment: "Great place!",
+            },
+            {
+              guest_id: 2,
+              comment: "Great place!",
+            },
+            {
+              guest_id: 2,
+              rating: 4,
+            },
+          ];
           return Promise.all(
-            methods.map((method) => {
-              return request(app)
-                [method](`/api/properties/${propertyId}/reviews`)
-                .expect(405)
-                .then(({ body: { msg } }) => {
-                  expect(msg).toBe("method not allowed");
-                });
-            })
+            propertyReviewList.map((propertyReview) =>
+              request(app)
+                .post(`/api/properties/${propertyId}/reviews`)
+                .send(propertyReview)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).toBe("missing required fields");
+                })
+            )
           );
+        });
+        test("400 - rating must be between 1 and 5", () => {
+          const propertyId = 1;
+          const invalidRatings = [
+            { guest_id: 2, rating: 6, comment: "Good review" },
+            { guest_id: 2, rating: 0, comment: "Bad review" },
+          ];
+          return Promise.all(
+            invalidRatings.map((invalidRating) =>
+              request(app)
+                .post(`/api/properties/${propertyId}/reviews`)
+                .send(invalidRating)
+                .expect(400)
+                .then(({ body }) => {
+                  expect(body.msg).toBe("rating must be between 1 and 5");
+                })
+            )
+          );
+        });
+        test("400 - invalid guest id", () => {
+          const propertyId = 1;
+          const invalidGuestIdReview = {
+            guest_id: 1000,
+            rating: 4,
+            comment: "Nice property!",
+          };
+          return request(app)
+            .post(`/api/properties/${propertyId}/reviews`)
+            .send(invalidGuestIdReview)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(
+                "guest with ID 1000 not found or not a guest"
+              );
+            });
         });
       });
     });
