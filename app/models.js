@@ -212,9 +212,32 @@ async function addPropertyReview(id, propertyReview) {
   return addedPropertyReview.rows[0];
 }
 
+async function removePropertyReview(id) {
+  const propertyReview = await db.query(
+    `SELECT * FROM reviews WHERE review_id = $1`,
+    [id]
+  );
+
+  if (propertyReview.rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `review with ID ${id} not found`,
+    });
+  }
+
+  const deletedReview = await db.query(
+    `DELETE FROM reviews
+  WHERE review_id = $1`,
+    [id]
+  );
+
+  return deletedReview.rows[0];
+}
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
   fetchReviewsByPropertyId,
   addPropertyReview,
+  removePropertyReview,
 };

@@ -3,6 +3,7 @@ const {
   fetchPropertyById,
   fetchReviewsByPropertyId,
   addPropertyReview,
+  removePropertyReview,
 } = require("./models");
 
 const getProperties = async (req, res, next) => {
@@ -64,9 +65,20 @@ const postPropertyReview = async (req, res, next) => {
   }
 };
 
+const deletePropertyReview = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deletedPropertyReview = await removePropertyReview(id);
+    res.status(204).send(deletedPropertyReview);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getProperties,
   getPropertyById,
   getReviewsByPropertyId,
   postPropertyReview,
+  deletePropertyReview,
 };

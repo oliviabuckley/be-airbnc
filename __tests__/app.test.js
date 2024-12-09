@@ -500,4 +500,37 @@ describe("app", () => {
       });
     });
   });
+  describe("/api/reviews/:id", () => {
+    describe("happy path", () => {
+      test("204 - deletes review with the corresponding id", () => {
+        return request(app).delete("/api/reviews/1").expect(204);
+      });
+    });
+    describe("sad path", () => {
+      test("404 - review does not exist", () => {
+        return request(app)
+          .delete("/api/reviews/1000")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("review with ID 1000 not found");
+          });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["get", "post", "put", "patch"];
+          const propertyId = 1;
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method](`/api/reviews/1000`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
+    });
+  });
 });
