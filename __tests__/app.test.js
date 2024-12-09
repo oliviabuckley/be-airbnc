@@ -502,8 +502,10 @@ describe("app", () => {
   });
   describe("/api/reviews/:id", () => {
     describe("happy path", () => {
-      test("204 - deletes review with the corresponding id", () => {
-        return request(app).delete("/api/reviews/1").expect(204);
+      describe("DELETE", () => {
+        test("204 - deletes review with the corresponding id", () => {
+          return request(app).delete("/api/reviews/1").expect(204);
+        });
       });
     });
     describe("sad path", () => {
@@ -523,6 +525,83 @@ describe("app", () => {
             methods.map((method) => {
               return request(app)
                 [method](`/api/reviews/1000`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
+    });
+  });
+  describe("/api/properties/:id/favourite", () => {
+    describe("happy path", () => {
+      describe("POST", () => {
+        test("201 - responds with a success message and the favourite id", () => {
+          const propertyId = 1;
+          const favourite = { guest_id: 2 };
+          return request(app)
+            .post(`/api/properties/${propertyId}/favourite`)
+            .send(favourite)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body).toEqual(
+                expect.objectContaining({
+                  msg: "property favourited successfully",
+                  favourite_id: expect.any(Number),
+                })
+              );
+            });
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("POST", () => {
+        test("400 - missing required fields", () => {
+          const propertyId = 1;
+          const favourite = {};
+          return request(app)
+            .post(`/api/properties/${propertyId}/favourite`)
+            .send(favourite)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("missing required guest_id");
+            });
+        });
+        test("400 - invalid guest id", () => {
+          const propertyId = 1;
+          const invalidGuestIdFavourite = {
+            guest_id: 1000,
+          };
+          return request(app)
+            .post(`/api/properties/${propertyId}/favourite`)
+            .send(invalidGuestIdFavourite)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(
+                "guest with ID 1000 not found or not a guest"
+              );
+            });
+        });
+        test("404 - property does not exist", () => {
+          const propertyId = 10000000;
+          return request(app)
+            .post(`/api/properties/${propertyId}/favourite`)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`property with ID ${propertyId} not found`);
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["delete", "get", "put", "patch"];
+          const propertyId = 1;
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method](`/api/properties/${propertyId}/favourite`)
                 .expect(405)
                 .then(({ body: { msg } }) => {
                   expect(msg).toBe("method not allowed");
