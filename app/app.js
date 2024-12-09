@@ -5,6 +5,7 @@ const {
   getPropertyById,
   getReviewsByPropertyId,
   postPropertyReview,
+  deletePropertyReview,
 } = require("./controllers");
 const {
   handlePathNotFound,
@@ -25,6 +26,11 @@ app
   .route("/api/properties/:id/reviews")
   .get(getReviewsByPropertyId)
   .post(postPropertyReview)
+  .all(handleMethodNotAllowed);
+
+app
+  .route("/api/reviews/:id")
+  .delete(deletePropertyReview)
   .all(handleMethodNotAllowed);
 
 app.all("/*", handlePathNotFound);
