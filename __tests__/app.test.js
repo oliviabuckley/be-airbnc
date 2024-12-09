@@ -482,6 +482,22 @@ describe("app", () => {
             });
         });
       });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["delete", "put", "patch"];
+          const propertyId = 1;
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method](`/api/properties/${propertyId}/reviews`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
     });
   });
 });
