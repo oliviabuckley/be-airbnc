@@ -509,13 +509,15 @@ describe("app", () => {
       });
     });
     describe("sad path", () => {
-      test("404 - review does not exist", () => {
-        return request(app)
-          .delete("/api/reviews/1000")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("review with ID 1000 not found");
-          });
+      describe("DELETE", () => {
+        test("404 - review does not exist", () => {
+          return request(app)
+            .delete("/api/reviews/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("review with ID 1000 not found");
+            });
+        });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {
@@ -602,6 +604,42 @@ describe("app", () => {
             methods.map((method) => {
               return request(app)
                 [method](`/api/properties/${propertyId}/favourite`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
+    });
+  });
+  describe("/api/favourites/:id", () => {
+    describe("happy path", () => {
+      describe("DELETE", () => {
+        test("204 - deletes favourite with the corresponding id", () => {
+          return request(app).delete("/api/favourites/1").expect(204);
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("DELETE", () => {
+        test("404 - favourite does not exist", () => {
+          return request(app)
+            .delete("/api/favourites/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("favourite with ID 1000 not found");
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["get", "post", "put", "patch"];
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method](`/api/favourites/1`)
                 .expect(405)
                 .then(({ body: { msg } }) => {
                   expect(msg).toBe("method not allowed");
