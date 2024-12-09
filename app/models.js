@@ -301,6 +301,24 @@ async function removePropertyFavourite(id) {
   return deletedFavourite.rows[0];
 }
 
+async function fetchUserById(id) {
+  let queryStr = `SELECT 
+  *
+FROM users
+WHERE users.user_id = $1`;
+
+  const user = await db.query(queryStr, [id]);
+
+  if (user.rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `user with ID ${id} not found`,
+    });
+  }
+
+  return user.rows[0];
+}
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
@@ -309,4 +327,5 @@ module.exports = {
   removePropertyReview,
   addPropertyFavourite,
   removePropertyFavourite,
+  fetchUserById,
 };

@@ -243,6 +243,7 @@ describe("app", () => {
             .expect(200)
             .then(({ body: { property } }) => {
               expect(typeof property).toBe("object");
+              expect(property.property_id).toBe(1);
             });
         });
         test("property object has the correct properties", () => {
@@ -640,6 +641,63 @@ describe("app", () => {
             methods.map((method) => {
               return request(app)
                 [method](`/api/favourites/1`)
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).toBe("method not allowed");
+                });
+            })
+          );
+        });
+      });
+    });
+  });
+  describe("/api/users/:id", () => {
+    describe("happy path", () => {
+      describe("GET", () => {
+        test("200 - responds with the corresponding user object", () => {
+          return request(app)
+            .get("/api/users/1")
+            .expect(200)
+            .then(({ body }) => {
+              expect(typeof body).toBe("object");
+              expect(body.user_id).toBe(1);
+            });
+        });
+        test("user has the correct properties", () => {
+          return request(app)
+            .get("/api/users/1")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toHaveProperty("user_id");
+              expect(body).toHaveProperty("first_name");
+              expect(body).toHaveProperty("surname");
+              expect(body).toHaveProperty("email");
+              expect(body).toHaveProperty("phone_number");
+              expect(body).toHaveProperty("role");
+              expect(body).toHaveProperty("avatar");
+              expect(body).toHaveProperty("created_at");
+            });
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("404 - user does not exist", () => {
+          return request(app)
+            .get("/api/users/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("user with ID 1000 not found");
+            });
+        });
+      });
+      describe("invalid methods", () => {
+        test("405 - method not allowed", () => {
+          const methods = ["delete", "post", "put", "patch"];
+          return Promise.all(
+            methods.map((method) => {
+              return request(app)
+                [method]("/api/users/1")
                 .expect(405)
                 .then(({ body: { msg } }) => {
                   expect(msg).toBe("method not allowed");
