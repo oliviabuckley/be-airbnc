@@ -24,7 +24,8 @@ app
 app
   .route("/api/properties/:id/reviews")
   .get(getReviewsByPropertyId)
-  .post(postPropertyReview);
+  .post(postPropertyReview)
+  .all(handleMethodNotAllowed);
 
 app.all("/*", handlePathNotFound);
 
