@@ -279,6 +279,28 @@ async function addPropertyFavourite(id, propertyFavourite) {
   };
 }
 
+async function removePropertyFavourite(id) {
+  const propertyFavourite = await db.query(
+    `SELECT * FROM favourites WHERE favourite_id = $1`,
+    [id]
+  );
+
+  if (propertyFavourite.rows.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: `favourite with ID ${id} not found`,
+    });
+  }
+
+  const deletedFavourite = await db.query(
+    `DELETE FROM favourites
+  WHERE favourite_id = $1`,
+    [id]
+  );
+
+  return deletedFavourite.rows[0];
+}
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
@@ -286,4 +308,5 @@ module.exports = {
   addPropertyReview,
   removePropertyReview,
   addPropertyFavourite,
+  removePropertyFavourite,
 };

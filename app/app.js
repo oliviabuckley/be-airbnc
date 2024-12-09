@@ -7,6 +7,7 @@ const {
   postPropertyReview,
   deletePropertyReview,
   postPropertyFavourite,
+  deletePropertyFavourite,
 } = require("./controllers");
 const {
   handlePathNotFound,
@@ -37,6 +38,11 @@ app
 app
   .route("/api/properties/:id/favourite")
   .post(postPropertyFavourite)
+  .all(handleMethodNotAllowed);
+
+app
+  .route("/api/favourites/:id")
+  .delete(deletePropertyFavourite)
   .all(handleMethodNotAllowed);
 
 app.all("/*", handlePathNotFound);
