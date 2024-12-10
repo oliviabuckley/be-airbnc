@@ -1,13 +1,21 @@
 const db = require("./connection");
 const seed = require("./seed");
-const users = require("./data/test/users.json");
-const propertyTypes = require("./data/test/property-types.json");
-const properties = require("./data/test/properties.json");
-const favourites = require("./data/test/favourites.json");
-const reviews = require("./data/test/reviews.json");
+const {
+  favouritesData,
+  propertiesData,
+  propertyTypesData,
+  reviewsData,
+  usersData,
+} = require("../db/data/test/index");
 
 async function runSeed() {
-  await seed(users, propertyTypes, properties, favourites, reviews);
+  await seed(
+    usersData,
+    propertyTypesData,
+    propertiesData,
+    favouritesData,
+    reviewsData
+  );
   db.end();
 }
 runSeed();

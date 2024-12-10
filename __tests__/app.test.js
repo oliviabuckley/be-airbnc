@@ -1,16 +1,24 @@
 const app = require("../app/app");
 const db = require("../db/connection");
 const seed = require("../db/seed");
-const users = require("../db/data/test/users.json");
-const propertyTypes = require("../db/data/test/property-types.json");
-const properties = require("../db/data/test/properties.json");
-const favourites = require("../db/data/test/favourites.json");
-const reviews = require("../db/data/test/reviews.json");
+const {
+  favouritesData,
+  propertiesData,
+  propertyTypesData,
+  reviewsData,
+  usersData,
+} = require("../db/data/test/index");
 const request = require("supertest");
 require("jest-extended");
 
 beforeEach(() => {
-  return seed(users, propertyTypes, properties, favourites, reviews);
+  return seed(
+    usersData,
+    propertyTypesData,
+    propertiesData,
+    favouritesData,
+    reviewsData
+  );
 });
 
 afterAll(() => {
@@ -679,21 +687,74 @@ describe("app", () => {
             });
         });
       });
+      describe("PATCH", () => {
+        test("200 - responds with the updated user object", () => {
+          const updatedDetails = {
+            first_name: "Marjorie",
+            surname: "Smith",
+            phone: "+44 7000 222222",
+            email: "marjorie@test.com",
+            avatar: "newpic",
+          };
+          return request(app)
+            .patch(`/api/users/1`)
+            .send(updatedDetails)
+            .expect(200)
+            .then(
+              ({
+                body: {
+                  first_name,
+                  surname,
+                  phone_number,
+                  email,
+                  avatar,
+                  user_id,
+                },
+              }) => {
+                expect(first_name).toBe("Marjorie");
+                expect(surname).toBe("Smith");
+                expect(phone_number).toBe("+44 7000 222222");
+                expect(email).toBe("marjorie@test.com");
+                expect(avatar).toBe("newpic");
+                expect(user_id).toBe(1);
+              }
+            );
+        });
+      });
     });
     describe("sad path", () => {
-      describe("GET", () => {
-        test("404 - user does not exist", () => {
+      test("404 - user does not exist", () => {
+        return request(app)
+          .get("/api/users/1000")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("user with ID 1000 not found");
+          });
+      });
+      describe("PATCH", () => {
+        test("400 - no valid fields to update", () => {
           return request(app)
-            .get("/api/users/1000")
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).toBe("user with ID 1000 not found");
+            .patch("/api/users/1")
+            .send({})
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("no valid fields to update");
+            });
+        });
+        test("400 - invalid field in request body", () => {
+          const updatedDetails = { role: "guest" };
+          return request(app)
+            .patch("/api/users/1")
+            .send(updatedDetails)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("invalid fields: role");
             });
         });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {
-          const methods = ["delete", "post", "put", "patch"];
+          const methods = ["delete", "post", "put"];
           return Promise.all(
             methods.map((method) => {
               return request(app)
