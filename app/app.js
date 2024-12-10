@@ -1,18 +1,26 @@
 const express = require("express");
 const app = express();
-const {
-  getProperties,
-  getPropertyById,
-  getReviewsByPropertyId,
-  postPropertyReview,
-  deletePropertyReview,
-  postPropertyFavourite,
-  deletePropertyFavourite,
-} = require("./controllers");
+
 const {
   getUserById,
   patchUserDetails,
 } = require("../app/controllers/users-controllers");
+
+const {
+  getProperties,
+  getPropertyById,
+} = require("../app/controllers/properties-controllers");
+
+const {
+  getReviewsByPropertyId,
+  postPropertyReview,
+  deletePropertyReview,
+} = require("../app/controllers/reviews-controllers");
+
+const {
+  postPropertyFavourite,
+  deletePropertyFavourite,
+} = require("../app/controllers/favourites-controllers");
 
 const {
   handlePathNotFound,
