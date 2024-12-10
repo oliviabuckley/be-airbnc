@@ -1,13 +1,13 @@
-const app = require("../app/app");
-const db = require("../db/connection");
-const seed = require("../db/seed");
+const app = require("../../app/app");
+const db = require("../../db/connection");
+const seed = require("../../db/seed");
 const {
   favouritesData,
   propertiesData,
   propertyTypesData,
   reviewsData,
   usersData,
-} = require("../db/data/test/index");
+} = require("../../db/data/test/index");
 const request = require("supertest");
 require("jest-extended");
 
@@ -99,8 +99,6 @@ describe("app", () => {
               });
           });
           test("200 - responds with all properties between minPrice and maxPrice", () => {
-            const minPrice = 100;
-            const maxPrice = 150;
             return request(app)
               .get(`/api/properties?minPrice=100&maxPrice=200`)
               .expect(200)
@@ -245,7 +243,7 @@ describe("app", () => {
   describe("/api/properties/:id", () => {
     describe("happy path", () => {
       describe("GET", () => {
-        test("200 - responds with property object", () => {
+        test("200 - responds with corresponding property object", () => {
           return request(app)
             .get(`/api/properties/1`)
             .expect(200)
@@ -277,6 +275,14 @@ describe("app", () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).toBe("property with ID 1000 not found");
+            });
+        });
+        test("400 - invalid property id", () => {
+          return request(app)
+            .get("/api/properties/invalidId")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("invalid property ID, must be a number");
             });
         });
       });
@@ -527,6 +533,14 @@ describe("app", () => {
               expect(body.msg).toBe("review with ID 1000 not found");
             });
         });
+        test("400 - invalid review ID", () => {
+          return request(app)
+            .delete("/api/reviews/invalidId")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("invalid review ID, must be a number");
+            });
+        });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {
@@ -729,6 +743,14 @@ describe("app", () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("user with ID 1000 not found");
+          });
+      });
+      test("400 - invalid user id", () => {
+        return request(app)
+          .get("/api/users/invalidId")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("invalid user ID, must be a number");
           });
       });
       describe("PATCH", () => {

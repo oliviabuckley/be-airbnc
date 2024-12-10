@@ -5,6 +5,13 @@ const {
 } = require("../queries/users-queries");
 
 async function fetchUserById(id) {
+  if (isNaN(Number(id))) {
+    return Promise.reject({
+      status: 400,
+      msg: "invalid user ID, must be a number",
+    });
+  }
+
   const user = await db.query(fetchUserByIdQuery, [id]);
 
   if (user.rows.length === 0) {
