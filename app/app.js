@@ -8,8 +8,12 @@ const {
   deletePropertyReview,
   postPropertyFavourite,
   deletePropertyFavourite,
-  getUserById,
 } = require("./controllers");
+const {
+  getUserById,
+  patchUserDetails,
+} = require("../app/controllers/users-controllers");
+
 const {
   handlePathNotFound,
   handleMethodNotAllowed,
@@ -46,7 +50,11 @@ app
   .delete(deletePropertyFavourite)
   .all(handleMethodNotAllowed);
 
-app.route("/api/users/:id").get(getUserById).all(handleMethodNotAllowed);
+app
+  .route("/api/users/:id")
+  .get(getUserById)
+  .patch(patchUserDetails)
+  .all(handleMethodNotAllowed);
 
 app.all("/*", handlePathNotFound);
 

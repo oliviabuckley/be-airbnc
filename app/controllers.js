@@ -6,7 +6,7 @@ const {
   removePropertyReview,
   addPropertyFavourite,
   removePropertyFavourite,
-  fetchUserById,
+  updateUserDetails,
 } = require("./models");
 
 const getProperties = async (req, res, next) => {
@@ -102,16 +102,6 @@ const deletePropertyFavourite = async (req, res, next) => {
   }
 };
 
-const getUserById = async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const user = await fetchUserById(id);
-    res.status(200).send(user);
-  } catch (err) {
-    next(err);
-  }
-};
-
 module.exports = {
   getProperties,
   getPropertyById,
@@ -120,5 +110,4 @@ module.exports = {
   deletePropertyReview,
   postPropertyFavourite,
   deletePropertyFavourite,
-  getUserById,
 };
