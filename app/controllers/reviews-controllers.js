@@ -33,8 +33,8 @@ const postPropertyReview = async (req, res, next) => {
 const deletePropertyReview = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deletedPropertyReview = await removePropertyReview(id);
-    res.status(204).send(deletedPropertyReview);
+    await removePropertyReview(id);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }
