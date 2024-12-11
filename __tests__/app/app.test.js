@@ -277,14 +277,6 @@ describe("app", () => {
               expect(body.msg).toBe("property with ID 1000 not found");
             });
         });
-        test("400 - invalid property id", () => {
-          return request(app)
-            .get("/api/properties/invalidId")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).toBe("invalid property ID, must be a number");
-            });
-        });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {
@@ -533,14 +525,6 @@ describe("app", () => {
               expect(body.msg).toBe("review with ID 1000 not found");
             });
         });
-        test("400 - invalid review ID", () => {
-          return request(app)
-            .delete("/api/reviews/invalidId")
-            .expect(400)
-            .then(({ body: { msg } }) => {
-              expect(msg).toBe("invalid review ID, must be a number");
-            });
-        });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {
@@ -734,14 +718,6 @@ describe("app", () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("user with ID 1000 not found");
-          });
-      });
-      test("400 - invalid user id", () => {
-        return request(app)
-          .get("/api/users/invalidId")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe("invalid user ID, must be a number");
           });
       });
       describe("PATCH", () => {

@@ -1,5 +1,9 @@
 const db = require("../../db/connection");
-const { fetchPropertyByIdQuery } = require("../queries/properties-queries");
+const {
+  fetchPropertiesQuery,
+  fetchPropertyByIdQuery,
+} = require("../queries/properties-queries");
+const { validateId } = require("./utils");
 
 async function fetchProperties(
   sortBy,
@@ -48,16 +52,7 @@ async function fetchProperties(
     });
   }
 
-  let queryStr = `SELECT 
-    properties.property_id,
-    properties.name AS property_name,
-    properties.location,
-    properties.price_per_night,
-    CONCAT(users.first_name, ' ', users.surname) AS host,
-    CAST(COUNT(favourites.property_id) AS INTEGER) AS favourites
-    FROM properties
-    JOIN users ON properties.host_id = users.user_id
-    LEFT JOIN favourites ON properties.property_id = favourites.property_id`;
+  let queryStr = fetchPropertiesQuery;
 
   if (minPrice && maxPrice) {
     queryStr += ` WHERE properties.price_per_night >= $1 AND properties.price_per_night <= $2`;
@@ -93,12 +88,7 @@ async function fetchProperties(
 }
 
 async function fetchPropertyById(id) {
-  if (isNaN(Number(id))) {
-    return Promise.reject({
-      status: 400,
-      msg: "invalid property ID, must be a number",
-    });
-  }
+  await validateId(id);
 
   const property = await db.query(fetchPropertyByIdQuery, [id]);
 
