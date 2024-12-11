@@ -4,8 +4,10 @@
   "description": "This project is a backend implementation for a platform similar to airbnb, designed to allow users to view a list property rentals which are available to book.",
   "main": "index.js",
   "scripts": {
-    "setup-db": "psql -f ./db/data/setup-db.sql",
+    "setup-db": "psql -f ./db/setup-db.sql",
     "seed": "node ./db/run-seed.js",
+    "seed-dev": "NODE_ENV=dev npm run seed",
+    "seed-prod": "NODE_ENV=prod npm run seed",
     "test": "jest"
   },
   "keywords": [],
