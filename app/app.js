@@ -1,68 +1,20 @@
 const express = require("express");
 const app = express();
-
-const {
-  getUserById,
-  patchUserDetails,
-} = require("../app/controllers/users-controllers");
-
-const {
-  getProperties,
-  getPropertyById,
-} = require("../app/controllers/properties-controllers");
-
-const {
-  getReviewsByPropertyId,
-  postPropertyReview,
-  deletePropertyReview,
-} = require("../app/controllers/reviews-controllers");
-
-const {
-  postPropertyFavourite,
-  deletePropertyFavourite,
-} = require("../app/controllers/favourites-controllers");
-
-const {
-  handlePathNotFound,
-  handleMethodNotAllowed,
-  handleCustomErrors,
-} = require("./errors");
+const { handlePathNotFound, handleCustomErrors } = require("./errors");
+const propertiesRouter = require("./routes/properties-routes");
+const usersRouter = require("./routes/users-routes");
+const reviewsRouter = require("./routes/reviews-routes");
+const favouritesRouter = require("./routes/favourites-routes");
 
 app.use(express.json());
 
-app.route("/api/properties").get(getProperties).all(handleMethodNotAllowed);
+app.use("/api/properties", propertiesRouter);
 
-app
-  .route("/api/properties/:id")
-  .get(getPropertyById)
-  .all(handleMethodNotAllowed);
+app.use("/api/reviews", reviewsRouter);
 
-app
-  .route("/api/properties/:id/reviews")
-  .get(getReviewsByPropertyId)
-  .post(postPropertyReview)
-  .all(handleMethodNotAllowed);
+app.use("/api/favourites", favouritesRouter);
 
-app
-  .route("/api/reviews/:id")
-  .delete(deletePropertyReview)
-  .all(handleMethodNotAllowed);
-
-app
-  .route("/api/properties/:id/favourite")
-  .post(postPropertyFavourite)
-  .all(handleMethodNotAllowed);
-
-app
-  .route("/api/favourites/:id")
-  .delete(deletePropertyFavourite)
-  .all(handleMethodNotAllowed);
-
-app
-  .route("/api/users/:id")
-  .get(getUserById)
-  .patch(patchUserDetails)
-  .all(handleMethodNotAllowed);
+app.use("/api/users", usersRouter);
 
 app.all("/*", handlePathNotFound);
 
