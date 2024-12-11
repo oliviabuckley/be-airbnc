@@ -2,6 +2,10 @@
 
 This project is a backend implementation for a platform similar to Airbnb, designed to allow users to view a list property rentals which are available to book.
 
+# Deployment
+
+This project is hosted and you can view the live app here: https://be-airbnc.onrender.com.
+
 # Features
 
 - **Property Listings**: Retrieve a list of available properties along with their details, such as name, location and price.
