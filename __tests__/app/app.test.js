@@ -609,15 +609,6 @@ describe("app", () => {
               );
             });
         });
-        test("404 - property does not exist", () => {
-          const propertyId = 10000000;
-          return request(app)
-            .post(`/api/properties/${propertyId}/favourite`)
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).toBe(`property with ID ${propertyId} not found`);
-            });
-        });
       });
       describe("invalid methods", () => {
         test("405 - method not allowed", () => {

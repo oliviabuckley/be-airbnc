@@ -7,18 +7,6 @@ const {
 async function addPropertyFavourite(id, propertyFavourite) {
   const { guest_id } = propertyFavourite;
 
-  const propertyExists = await db.query(
-    "SELECT * FROM properties WHERE property_id = $1",
-    [id]
-  );
-
-  if (propertyExists.rows.length === 0) {
-    return Promise.reject({
-      status: 404,
-      msg: `property with ID ${id} not found`,
-    });
-  }
-
   if (!guest_id) {
     return Promise.reject({ status: 400, msg: "missing required guest_id" });
   }
