@@ -9,7 +9,7 @@
     "seed-dev": "NODE_ENV=dev npm run seed",
     "seed-prod": "NODE_ENV=prod npm run seed",
     "test": "jest",
-    "start": "node listen.js"
+    "start": "node app/listen.js"
   },
   "keywords": [],
   "author": "Olivia Buckley",
