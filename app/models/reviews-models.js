@@ -6,6 +6,7 @@ const {
   addReviewQuery,
   deleteReviewQuery,
 } = require("../queries/reviews-queries");
+const { validateId } = require("./utils");
 
 async function fetchReviewsByPropertyId(id) {
   await fetchPropertyById(id);
@@ -35,6 +36,7 @@ async function fetchReviewsByPropertyId(id) {
 }
 
 async function addPropertyReview(id, propertyReview) {
+  await fetchPropertyById(id);
   const { guest_id, rating, comment } = propertyReview;
 
   if (!guest_id || rating === undefined || !comment) {
@@ -82,12 +84,7 @@ async function addPropertyReview(id, propertyReview) {
 }
 
 async function removePropertyReview(id) {
-  if (isNaN(Number(id))) {
-    return Promise.reject({
-      status: 400,
-      msg: "invalid review ID, must be a number",
-    });
-  }
+  await validateId(id);
   const propertyReview = await db.query(
     `SELECT * FROM reviews WHERE review_id = $1`,
     [id]

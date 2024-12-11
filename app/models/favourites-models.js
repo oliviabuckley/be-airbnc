@@ -3,8 +3,11 @@ const {
   addPropertyFavouriteQuery,
   deletePropertyFavouriteQuery,
 } = require("../queries/favourites-queries");
+const { fetchPropertyById } = require("./properties-models");
+const { validateId } = require("./utils");
 
 async function addPropertyFavourite(id, propertyFavourite) {
+  await fetchPropertyById(id);
   const { guest_id } = propertyFavourite;
 
   if (!guest_id) {
@@ -33,6 +36,7 @@ async function addPropertyFavourite(id, propertyFavourite) {
 }
 
 async function removePropertyFavourite(id) {
+  await validateId(id);
   const propertyFavourite = await db.query(
     `SELECT * FROM favourites WHERE favourite_id = $1`,
     [id]

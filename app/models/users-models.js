@@ -1,16 +1,9 @@
 const db = require("../../db/connection");
-const {
-  fetchUserByIdQuery,
-  updateUserQuery,
-} = require("../queries/users-queries");
+const { fetchUserByIdQuery } = require("../queries/users-queries");
+const { validateId } = require("./utils");
 
 async function fetchUserById(id) {
-  if (isNaN(Number(id))) {
-    return Promise.reject({
-      status: 400,
-      msg: "invalid user ID, must be a number",
-    });
-  }
+  await validateId(id);
 
   const user = await db.query(fetchUserByIdQuery, [id]);
 
