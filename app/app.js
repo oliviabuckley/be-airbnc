@@ -5,14 +5,11 @@ const propertiesRouter = require("./routes/properties-routes");
 const usersRouter = require("./routes/users-routes");
 const reviewsRouter = require("./routes/reviews-routes");
 const favouritesRouter = require("./routes/favourites-routes");
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+const docsRouter = require("./routes/docs-routes");
 
 app.use(express.json());
+
+app.use("/", docsRouter);
 
 app.use("/api/properties", propertiesRouter);
 
