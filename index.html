@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airbnc API Documentation</title>
+  </head>
+  <body>
+    <header>
+      <h1>Airbnc🏡</h1>
+    </header>
+    <div class="grid">
+    <nav class="side-nav">
+      <h3>Contents</h3>
+  <ul>
+     <li><a href="#get-requests">GET Requests</a></li>
+  <ul>
+    <li><a href="#all-properties">All properties 🏘️</a></li>
+  <li><a href="#specific-property">Specific property 🏠</a></li>
+  <li><a href="#specific-property-reviews">Specific property reviews 🌟</a></li>
+  <li><a href=#specific-user>Specific user 👩</a></li>
+</ul>
+      <li><a href="#post-requests">POST Requests</a></li>
+      <ul>
+        <li><a href="#post-review">Property review 🌟</a></li>
+        <li><a href="#post-favourite">Property favourite 💜</a></li>
+      </ul>
+       <li><a href="#delete-requests">DELETE Requests</a></li>
+       <ul>
+        <li>
+          <a href="#delete-review">Property review 🌟</a>
+        </li>
+        <li><a href="#delete-favourite">Property favourte 💜</a></li>
+       </ul>
+        <li><a href="#patch-requests">PATCH Requests</a></li>
+        <ul>
+          <li><a href="#patch-user">User details 👩</a></li>
+        </ul>
+  </ul>
+</nav>
+    <main>
+      <p>A comprehensive guide to using the Airbnc API.</p>
+      <h2>Information</h2>
+      <p>
+        The Airbnc API is a backend service designed to facilitate property
+        rental management. It provides endpoints to interact with essential
+        features of the platform, including property listings, user
+        reviews, and more.
+      </p>
+      <h2>Getting Started</h2>
+      <p>Base URL: <a href="https://be-airbnc.onrender.com">https://be-airbnc.onrender.com</a></p>
+      <p>
+        The Airbnc API is fully public. You can access all endpoints without the
+        need for an API key or any form of authentication.
+      </p>
+      <h2>Endpoints</h2>
+       <section id="get-requests">
+        <sction id="all-properties">
+      <h3>GET /api/properties</h3>
+      <p>Retrieve a list of all properties.</p>
+      <p><p>By default, the API returns all properties ordered by most favourited to least.</p></p>
+      <h4>Optional Query Parameters:</h4>
+      <ul>
+        <li>
+          <strong>sortBy</strong>: Sort properties by a field. Accepted values: 
+          <strong>price_per_night</strong>, <strong>location</strong> and <strong>favourites</strong>.
+        </li>
+        <li>
+          <strong>order</strong>: Specify the sort order of the properties. Accepted
+          values: <strong>ASC</strong> (ascending) or <strong>DESC</strong> (descending).
+        </li>
+        <li>
+          <strong>maxPrice</strong>: Filter properties under a maximum nightly
+          price. Accepted value: any valid number (e.g. <strong>150</strong>).
+        </li>
+        <li>
+          <strong>minPrice</strong>: Filter properties above a minimum nightly
+          price. Accepted value: any valid number (e.g. <strong>50</strong>).
+        </li>
+        <li>
+          <strong>maxPrice</strong> & <strong>minPrice</strong>: Filter properties by
+          both a maximum and minimum nightly price. Accepted values: any valid numbers.
+        </li>
+        <li>
+          <strong>host</strong>: Filter properties belonging to a specific host. Accepted value: a valid host ID (e.g. <strong>1</strong>)
+        </li>
+      </ul>
+      <p>All optional query parameters and their values are <strong>case-sensitive</strong>. Ensure parameters are provided exactly as shown, e.g. <strong>sortBy=price_per_night&order=ASC</strong>.</p>
+      <h4>Response Structure:</h4>
+<p>Successful response will return a list of properties, with each property containing the following fields:</p>
+<pre><code>{
+  "properties": [
+    {
+      "property_id": &lt;id&gt;,
+      "property_name": &lt;name&gt;,
+      "location": &lt;location&gt;,
+      "price_per_night": &lt;price&gt;,
+      "host": &lt;host name&gt;,
+      "favourites": &lt;favourites_count&gt;
+    },
+    ...
+  ]
+}</code></pre>
+ <h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the properties are returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The query parameters provided are invalid (e.g. maxPrice is not a number).</div></li>
+    </ul>
+      <h4>Example Request:</h4>
+      <pre><code>GET /api/properties?minPrice=100&maxPrice=200&sortBy=price_per_night&order=ASC</code></pre>
+      <h4>Example Response:</h4>
+      <pre><code>{
+  "properties": [
+    {
+      "property_id": 2,
+      "property_name": "Cosy Family House",
+      "location": "Manchester, UK",
+      "price_per_night": "150",
+      "host": "Alice Johnson",
+      "favourites": 1
+    },
+    {
+      "property_id": 10,
+      "property_name": "Quaint Cottage in the Hills",
+      "location": "Lake District, UK",
+      "price_per_night": "180",
+      "host": "Isabella Martinez",
+      "favourites": 1
+    }
+  ]
+}</code></pre></section>
+<section id="specific-property">
+<h3>GET /api/properties/:id</h3>
+<p>Retrieve a specific property by its ID.</p>
+<p>The :id parameter must be a valid property ID, which is a positive integer corresponding to an existing property in the database.</p>
+<h4>Response Structure:</h4>
+<p>Successful response will return the specified property with the following fields:</p>
+<pre><code>{
+  "property": {
+    "property_id": &lt;id&gt;,                  
+    "property_name": &lt;name&gt;,              
+    "location": &lt;location&gt;,               
+    "price_per_night": &lt;price&gt;,             
+    "description": &lt;description&gt;,         
+    "host": &lt;host_name&gt;,                  
+    "host_avatar": &lt;image_url&gt;,           
+    "favourite_count": &lt;favourites_count&gt;   
+  }
+}</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the property is returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any property.</div></li>
+    </ul>
+      <h4>Example Request:</h4>
+      <pre><code>GET /api/properties/1</code></pre>
+      <h4>Example Response:</h4>
+<pre><code>{
+  "property": {
+    "property_id": 1,
+    "property_name": "Modern Apartment in City Center",
+    "location": "London, UK",
+    "price_per_night": "120",
+    "description": "Description of Modern Apartment in City Center.",
+    "host": "Alice Johnson",
+    "host_avatar": "https://example.com/images/alice.jpg",
+    "favourites": 1
+  }
+}</code></pre>
+</section>
+<section id="specific-property-reviews">
+<h3>GET /api/properties/:id/reviews</h3>
+<p>Retrieve all reviews for a specific property by its ID.</p>
+<p>By default, reviews are returned in order from the latest to the oldest. The response includes an <strong>average_rating</strong>, which is the average of all ratings for the property, calculated from the individual review ratings.</p>
+<p>The :id parameter must be a valid property ID, which is a positive integer corresponding to an existing property in the database.</p>
+<h4>Response Structure:</h4>
+<p>Successful response will return a list of reviews for the specified property, with the following fields, and an average rating:</p>
+<pre><code>{
+  "propertyReviews": [
+    {
+      "review_id": &lt;id&gt;,                          
+      "comment": &lt;comment&gt;,                     
+      "rating": &lt;rating&gt;,                         
+      "created_at": &lt;date&gt;,                     
+      "guest": &lt;guest_name&gt;,                   
+      "guest_avatar": &lt;img_url&gt;               
+    },
+    ...
+  ],
+  "average_rating": &lt;avg_of_ratings&gt;              
+}</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the reviews are returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any property.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>GET /api/properties/1/reviews</code></pre>
+<h4>Example Response:</h4>
+<pre><code>{
+  "propertyReviews": [
+    {
+      "review_id": 2,
+      "comment": "Comment about Modern Apartment in City Center: Too noisy at night, and the apartment felt cramped. Wouldn’t stay again.",
+      "rating": 2,
+      "created_at": "2024-12-13T10:29:41.417Z",
+      "guest": "Bob Smith",
+      "guest_avatar": "https://example.com/images/bob.jpg"
+    },
+    {
+      "review_id": 8,
+      "comment": "Comment about Modern Apartment in City Center: Central location but parking was a hassle and the space felt a bit cramped.",
+      "rating": 3,
+      "created_at": "2024-12-13T10:29:41.417Z",
+      "guest": "Rachel Cummings",
+      "guest_avatar": "https://example.com/images/rachel.jpg"
+    }
+  ],
+  "average_rating": 2.5
+}</code></pre>
+</section>
+<section id="specific-user">
+<h3>GET /api/users/:id</h3>
+<p>Retrieve details for a specific user by their ID.</p>
+<p>The response will include the user's information such as their name, email, phone number, avatar, and the date their account was created.</p>
+<p>The :id parameter must be a valid user ID, which is a positive integer corresponding to an existing user in the database.</p>
+<h4>Response Structure:</h4>
+<p>Successful response will return a user object with the following fields:</p>
+<pre><code>{
+    "user_id": &lt;id&gt;,              
+    "first_name": &lt;first_name&gt;, 
+    "surname": &lt;surname&gt;,      
+    "email": &lt;email&gt;,         
+    "phone_number": &lt;phone_number&gt;, 
+    "role": &lt;role&gt;,
+    "avatar": &lt;image_url&gt;,     
+    "created_at": &lt;date&gt;  
+  }
+</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the user is returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any user.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>GET /api/users/1</code></pre>
+<h4>Example Response:</h4>
+<pre><code>{
+  "user_id": 1,
+  "first_name": "Alice",
+  "surname": "Johnson",
+  "email": "alice@example.com",
+  "phone_number": "+44 7000 111111",
+  "role": "host",
+  "avatar": "https://example.com/images/alice.jpg",
+  "created_at": "2024-12-13T10:29:41.241Z"
+}</code></pre>
+</section>
+</section>
+<section id="post-requests">
+  <section id="post-review">
+<h3>POST /api/properties/:id/reviews</h3>
+<p>Create a new review for a specific property.</p>
+<p>The :id parameter must be a valid property ID, which is a positive integer corresponding to an existing property in the database.</p>
+<h4>Request Body:</h4>
+      <p>The request body must be a JSON object containing the following fields:</p>
+      <pre><code>{
+    "guest_id": &lt;id&gt;,
+    "rating": &lt;rating&gt;,
+    "comment": &lt;comment&gt;
+}</code></pre>
+<p>The following fields are required:</p>
+      <ul>
+        <li><strong>guest_id</strong>: The ID of the guest leaving the review (number).</li>
+        <li><strong>rating</strong>: The rating given by the guest (number between 1-5).</li>
+        <li><strong>comment</strong>: The textual comment left by the guest (string).</li>
+      </ul>
+      <h4>Response Structure:</h4>
+      <p>If the review is successfully added, the API will return the newly created review as a JSON object.</p>
+      <pre><code>{
+    "review_id": &lt;id&gt;,
+    "property_id": &lt;id&gt;,
+    "guest_id": &lt;id&gt;,
+    "rating": &lt;rating&gt;,
+    "comment": &lt;comment&gt;,
+    "created_at": &lt;date&gt;
+}</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-201">201 Created: The request was successful, and the review is added.</div></li>
+      <li><div class="status-box status-400">400 Bad Request (invalid ID): The provided ID is invalid. It must be a number, must correspond with a user and user must be a guest (not a host).</div></li>
+      <li><div class="status-box status-400">400 Bad Request (missing required fields): guest_id, rating and/or comment not provided.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any property.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>{
+    "guest_id": 1,
+    "rating": 5,
+    "comment": "Great stay! The property was exactly as described and had all the amenities I needed."
+}</code></pre>
+<h4>Example Response:</h4>
+      <pre><code>{
+    "review_id": 123,
+    "property_id": 456,
+    "guest_id": 1,
+    "rating": 5,
+    "comment": "Great stay! The property was exactly as described and had all the amenities I needed.",
+    "created_at": "2024-12-17T12:34:56Z"
+}</code></pre></section>
+<section id="post-favourite">
+<h3>POST /api/properties/:id/favourite</h3>
+<p>Create a new favourite for a specific property.</p>
+<p>The :id parameter must be a valid property ID, which is a positive integer corresponding to an existing property in the database.</p>
+<h4>Request Body:</h4>
+      <p>The request body must be a JSON object containing the following fields:</p>
+      <pre><code>{
+    "guest_id": &lt;id&gt;,
+}</code></pre>
+<p>The following fields are required:</p>
+      <ul>
+        <li><strong>guest_id</strong>: The ID of the guest leaving the review (number).</li>
+      </ul>
+      <h4>Response Structure:</h4>
+      <p>If the favourite is successfully added, the API will return a JSON object with a success message and the favourite ID.</p>
+      <pre><code>{
+    "msg": "property added successfully",
+    "favourite_id": &lt;id&gt;
+}</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-201">201 Created: The request was successful, and the favourite is added.</div></li>
+      <li><div class="status-box status-400">400 Bad Request (invalid ID): The provided ID is invalid. It must be a number, must correspond with a user and user must be a guest (not a host).</div></li>
+      <li><div class="status-box status-400">400 Bad Request (missing required field): guest_id not provided.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any property.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>{
+    "guest_id": 2
+}</code></pre>
+<h4>Example Response:</h4>
+      <pre><code>{
+    "msg": "property added successfully",
+    "favourite_id": 17
+}</code></pre>
+</section>
+</section>
+<section id="delete-requests">
+  <section id="delete-review">
+ <h3>DELETE /api/reviews/:id</h3>
+      <p>Delete a specific review by its ID.</p>
+      <p>The :id parameter must be a valid review ID, which is a positive integer corresponding to an existing review in the database.</p>
+      <h4>Response Structure:</h4>
+      <p>If the review is successfully deleted, the API will return no response body.</p>
+      <h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-204">204 Created: The request was successful, and the review is removed.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any review.</div></li>
+    </ul>
+      <h4>Example Request:</h4>
+      <pre><code>DELETE /api/reviews/1</code></pre>
+      <h4>Example Response:</h4>
+     <em>no content</em>
+     </section>
+     <section id="delete-favourite">
+       <h3>DELETE /api/favourite/:id</h3>
+      <p>Delete a specific favourite by its ID.</p>
+       <p>The :id parameter must be a valid favourite ID, which is a positive integer corresponding to an existing favourite in the database.</p>
+      <h4>Response Structure:</h4>
+      <p>If the favourite is successfully deleted, the API will return no response body.</p>
+       <h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-204">204 Created: The request was successful, and the favourite is removed.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any favourite.</div></li>
+    </ul>
+      <h4>Example Request:</h4>
+      <pre><code>DELETE /api/favourite/17</code></pre>
+      <h4>Example Response:</h4>
+      <em>no content</em>
+      </section>
+      </section>
+      <section id="patch-requests">
+        <section id="patch-user">
+    <h3>PATCH /api/users/:id</h3>
+    <p>Update a user's details by their ID. This endpoint allows partial updates of user properties.</p>
+     <p>The :id parameter must be a valid user ID, which is a positive integer corresponding to an existing user in the database.</p>
+    <h4>Request Body:</h4>
+    <p>The request body must be a JSON object containing any combination of the following properties:</p>
+    <pre><code>{
+  "first_name": &lt;first_name&gt;,
+  "surname": &lt;surname&gt;,
+  "email": &lt;email&gt;,
+  "phone": &lt;phone_number&gt;,
+  "avatar": &lt;img_url&gt;
+}</code></pre>
+    <h4>Response Structure:</h4>
+    <p>On success, the API will return the updated user object:</p>
+    <pre><code>{
+  "user_id": &lt;id&gt;,
+  "first_name": &lt;first_name&gt;
+  "surname": &lt;surname&gt;,
+  "email": &lt;email&gt;,
+  "phone_number": &lt;phone_number&gt;,
+  "role": &lt;role&gt;,
+  "avatar": &lt;img_url&gt;,
+  "created_at": &lt;date&gt;
+}</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the updated user is returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request (invalid ID): The provided ID is invalid, must be a number.</div></li>
+      <li><div class="status-box status-400">400 Bad Request (invalid fields): The fields provided are invalid and cannot be updated.</div></li>
+      <li><div class="status-box status-400">400 Bad Request (no valid fields): No valid fields to update.</div></li>
+      <li><div class="status-box status-404">404 Not Found: The provided ID does not match any user.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>{
+    "first_name": "Emma",
+    "email": "emma@example.com"
+}</code></pre>
+<h4>Example Response:</h4>
+      <pre><code>{
+  "user_id": 1,
+  "first_name": "Emma",
+  "surname": "Johnson",
+  "email": "Emma@example.com",
+  "phone_number": "+44 7000 111111",
+  "role": "host",
+  "avatar": "https://example.com/images/alice.jpg",
+  "created_at": "2024-12-13T10:29:41.241Z"
+}</code></pre>
+</section>
+</section>
+<br>
+    </main></div>
+    <footer>
+      <p>Created by Olivia Buckley 👩🏼‍💻</p>
+    </footer>
+  </body>
+</html>
