@@ -6,6 +6,12 @@ const usersRouter = require("./routes/users-routes");
 const reviewsRouter = require("./routes/reviews-routes");
 const favouritesRouter = require("./routes/favourites-routes");
 
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 app.use(express.json());
 
 app.use("/api/properties", propertiesRouter);
