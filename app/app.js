@@ -7,6 +7,9 @@ const reviewsRouter = require("./routes/reviews-routes");
 const favouritesRouter = require("./routes/favourites-routes");
 const docsRouter = require("./routes/docs-routes");
 const path = require("path");
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
 
