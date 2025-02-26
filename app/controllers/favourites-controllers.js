@@ -1,7 +1,18 @@
 const {
+  fetchFavourites,
   addPropertyFavourite,
   removePropertyFavourite,
 } = require("../models/favourites-models");
+
+const getFavourites = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const favourites = await fetchFavourites(id);
+    res.status(200).send(favourites);
+  } catch (err) {
+    next(err);
+  }
+};
 
 const postPropertyFavourite = async (req, res, next) => {
   const { id } = req.params;
@@ -28,6 +39,7 @@ const deletePropertyFavourite = async (req, res, next) => {
 };
 
 module.exports = {
+  getFavourites,
   postPropertyFavourite,
   deletePropertyFavourite,
 };

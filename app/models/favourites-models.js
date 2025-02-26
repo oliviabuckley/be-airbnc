@@ -6,6 +6,14 @@ const {
 const { fetchPropertyById } = require("./properties-models");
 const { validateId } = require("./utils");
 
+async function fetchFavourites(id) {
+  await validateId(id);
+
+  const favourites = await db.query(fetchFavouritesQuery, [id]);
+
+  return favourites.rows;
+}
+
 async function addPropertyFavourite(id, propertyFavourite) {
   await fetchPropertyById(id);
   const { guest_id } = propertyFavourite;
@@ -54,4 +62,8 @@ async function removePropertyFavourite(id) {
   return deletedFavourite.rows[0];
 }
 
-module.exports = { addPropertyFavourite, removePropertyFavourite };
+module.exports = {
+  fetchFavourites,
+  addPropertyFavourite,
+  removePropertyFavourite,
+};

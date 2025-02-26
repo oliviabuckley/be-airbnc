@@ -159,7 +159,7 @@ pre {
   background: linear-gradient(
     4deg,
     rgba(40, 167, 69, 1) 0%,
-    rgba(123, 200, 133, 1) 70% /* Less white, more solid green */
+    rgba(123, 200, 133, 1) 70%
   );
 }
 
@@ -168,7 +168,7 @@ pre {
   background: linear-gradient(
     4deg,
     rgba(220, 53, 69, 1) 0%,
-    rgba(225, 83, 89, 1) 70% /* Less white, more solid red */
+    rgba(225, 83, 89, 1) 70%
   );
 }
 
