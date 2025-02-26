@@ -1,5 +1,5 @@
 exports.fetchFavouritesQuery = `
-  SELECT properties.*
+  SELECT favourites.favourite_id, properties.*
   FROM favourites
   JOIN properties ON favourites.property_id = properties.property_id
   WHERE favourites.guest_id = $1;
