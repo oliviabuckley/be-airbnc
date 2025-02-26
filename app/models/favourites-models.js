@@ -16,32 +16,53 @@ async function fetchFavourites(id) {
 }
 
 async function addPropertyFavourite(id, propertyFavourite) {
-  await fetchPropertyById(id);
   const { guest_id } = propertyFavourite;
 
   if (!guest_id) {
     return Promise.reject({ status: 400, msg: "missing required guest_id" });
   }
 
-  const guestCheck = await db.query(
-    "SELECT * FROM users WHERE user_id = $1 AND role = $2",
-    [guest_id, "guest"]
-  );
-  if (guestCheck.rows.length === 0) {
+  try {
+    const guestCheck = await db.query(
+      "SELECT * FROM users WHERE user_id = $1 AND role = $2",
+      [guest_id, "guest"]
+    );
+
+    if (guestCheck.rows.length === 0) {
+      return Promise.reject({
+        status: 400,
+        msg: `guest with ID ${guest_id} not found or not a guest`,
+      });
+    }
+
+    const existingFavouriteCheck = await db.query(
+      "SELECT * FROM favourites WHERE guest_id = $1 AND property_id = $2",
+      [guest_id, id]
+    );
+
+    if (existingFavouriteCheck.rows.length > 0) {
+      return Promise.reject({
+        status: 400,
+        msg: "This property is already in your favourites.",
+      });
+    }
+
+    const addedPropertyFavourite = await db.query(addPropertyFavouriteQuery, [
+      id,
+      guest_id,
+    ]);
+
+    return {
+      msg: "property favourited successfully",
+      favourite_id: addedPropertyFavourite.rows[0].favourite_id,
+    };
+  } catch (error) {
+    console.error("Error in adding property to favourites:", error);
     return Promise.reject({
-      status: 400,
-      msg: `guest with ID ${guest_id} not found or not a guest`,
+      status: 500,
+      msg: "Internal server error",
     });
   }
-
-  const addedPropertyFavourite = await db.query(addPropertyFavouriteQuery, [
-    id,
-    guest_id,
-  ]);
-  return {
-    msg: "property favourited successfully",
-    favourite_id: addedPropertyFavourite.rows[0].favourite_id,
-  };
 }
 
 async function removePropertyFavourite(id) {
