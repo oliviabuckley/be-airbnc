@@ -1,5 +1,6 @@
 const db = require("../../db/connection");
 const {
+  fetchFavouritesQuery,
   addPropertyFavouriteQuery,
   deletePropertyFavouriteQuery,
 } = require("../queries/favourites-queries");
