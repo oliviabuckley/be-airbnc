@@ -17,6 +17,7 @@ const getFavourites = async (req, res, next) => {
 const postPropertyFavourite = async (req, res, next) => {
   const { id } = req.params;
   const propertyFavourite = req.body;
+
   try {
     const postedPropertyFavourite = await addPropertyFavourite(
       id,

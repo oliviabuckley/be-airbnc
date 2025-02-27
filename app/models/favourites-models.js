@@ -23,18 +23,19 @@ async function addPropertyFavourite(id, propertyFavourite) {
   }
 
   try {
-    const guestCheck = await db.query(
-      "SELECT * FROM users WHERE user_id = $1 AND role = $2",
-      [guest_id, "guest"]
-    );
+    // Check if the user exists (it could be either a guest or host)
+    const userCheck = await db.query("SELECT * FROM users WHERE user_id = $1", [
+      guest_id,
+    ]);
 
-    if (guestCheck.rows.length === 0) {
+    if (userCheck.rows.length === 0) {
       return Promise.reject({
         status: 400,
-        msg: `guest with ID ${guest_id} not found or not a guest`,
+        msg: `user with ID ${guest_id} not found`,
       });
     }
 
+    // Check if the property is already in the user's favourites
     const existingFavouriteCheck = await db.query(
       "SELECT * FROM favourites WHERE guest_id = $1 AND property_id = $2",
       [guest_id, id]
@@ -47,6 +48,7 @@ async function addPropertyFavourite(id, propertyFavourite) {
       });
     }
 
+    // Add the property to the user's favourites
     const addedPropertyFavourite = await db.query(addPropertyFavouriteQuery, [
       id,
       guest_id,
