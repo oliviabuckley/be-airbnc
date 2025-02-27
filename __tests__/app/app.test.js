@@ -483,7 +483,7 @@ describe("app", () => {
             .send(propertyReview)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe("guest has already reviewed this property");
+              expect(body.msg).toBe("user has already reviewed this property");
             });
         });
       });
@@ -547,7 +547,7 @@ describe("app", () => {
       describe("POST", () => {
         test("201 - responds with a success message and the favourite id", () => {
           const propertyId = 1;
-          const favourite = { guest_id: 2 };
+          const favourite = { guest_id: 1 };
           return request(app)
             .post(`/api/properties/${propertyId}/favourite`)
             .send(favourite)
