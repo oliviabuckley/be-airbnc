@@ -43,15 +43,14 @@ async function addPropertyReview(id, propertyReview) {
     return Promise.reject({ status: 400, msg: "missing required fields" });
   }
 
-  const guestCheck = await db.query(
-    "SELECT * FROM users WHERE user_id = $1 AND role = $2",
-    [guest_id, "guest"]
-  );
+  const userCheck = await db.query("SELECT * FROM users WHERE user_id = $1", [
+    guest_id,
+  ]);
 
-  if (guestCheck.rows.length === 0) {
+  if (userCheck.rows.length === 0) {
     return Promise.reject({
       status: 400,
-      msg: `guest with ID ${guest_id} not found or not a guest`,
+      msg: `user with ID ${guest_id} not found`,
     });
   }
 
@@ -70,7 +69,7 @@ async function addPropertyReview(id, propertyReview) {
   if (existingReview.rows.length > 0) {
     return Promise.reject({
       status: 400,
-      msg: "guest has already reviewed this property",
+      msg: "user has already reviewed this property",
     });
   }
 
@@ -80,6 +79,7 @@ async function addPropertyReview(id, propertyReview) {
     rating,
     comment,
   ]);
+
   return addedPropertyReview.rows[0];
 }
 

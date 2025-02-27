@@ -468,9 +468,7 @@ describe("app", () => {
             .send(invalidGuestIdReview)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe(
-                "guest with ID 1000 not found or not a guest"
-              );
+              expect(body.msg).toBe("user with ID 1000 not found");
             });
         });
         test("400 - guest cannot review same property twice", () => {
@@ -588,9 +586,7 @@ describe("app", () => {
             .send(invalidGuestIdFavourite)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe(
-                "guest with ID 1000 not found or not a guest"
-              );
+              expect(body.msg).toBe("user with ID 1000 not found");
             });
         });
       });
