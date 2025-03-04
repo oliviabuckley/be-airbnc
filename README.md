@@ -23,6 +23,7 @@ This project is hosted and you can view the live app here: https://be-airbnc.onr
 
 - **Favourites**:
 
+  - **Get User Favourites Favourites**: Retrieve a user's favourites list.
   - **Add Property to Favourites**: Add a property to the user's favourites list.
   - **Remove Property from Favourites**: Remove a property from the user's favourites list.
 
