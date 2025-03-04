@@ -20,6 +20,7 @@
   <li><a href="#specific-property">Specific property 🏠</a></li>
   <li><a href="#specific-property-reviews">Specific property reviews 🌟</a></li>
   <li><a href=#specific-user>Specific user 👩</a></li>
+  <li><a href=#specific-user-favourites>Specific user favourites 💜</a></li>
 </ul>
       <li><a href="#post-requests">POST Requests</a></li>
       <ul>
@@ -260,6 +261,46 @@
   "created_at": "2024-12-13T10:29:41.241Z"
 }</code></pre>
 </section>
+<section id="specific-user-favourites">
+<h3>GET /api/users/:id/favourites</h3>
+<p>Retrieve favourites for a specific user by their ID.</p>
+<p>The response will include a list of the properties favourited by the user.</p>
+<p>The :id parameter must be a valid user ID, which is a positive integer corresponding to an existing user in the database.</p>
+<h4>Response Structure:</h4>
+<p>Successful response will return a list of favourited properties, with each property containing the following fields:</p>
+<pre><code>[
+    {
+      "favourite_id": &lt;id&gt;,
+      "property_id": &lt;id&gt;,
+      "host_id": &lt;id&gt;,
+      "name": &lt;name&gt;,
+      "location": &lt;location&gt;,
+      "property_type": &lt;type&gt;,
+      "price_per_night": &lt;price&gt;,
+      "description": &lt;description&gt;
+    },
+    ...
+  ]
+</code></pre>
+<h4>Status Codes:</h4>
+     <ul>
+      <li><div class="status-box status-200">200 OK: The request was successful, and the favourited properties are returned.</div></li>
+      <li><div class="status-box status-400">400 Bad Request: The provided ID is invalid, must be a number.</div></li>
+    </ul>
+<h4>Example Request:</h4>
+<pre><code>GET /api/users/1</code></pre>
+<h4>Example Response:</h4>
+<pre><code>{
+  "user_id": 1,
+  "first_name": "Alice",
+  "surname": "Johnson",
+  "email": "alice@example.com",
+  "phone_number": "+44 7000 111111",
+  "role": "host",
+  "avatar": "https://example.com/images/alice.jpg",
+  "created_at": "2024-12-13T10:29:41.241Z"
+}</code></pre>
+</section>
 </section>
 <section id="post-requests">
   <section id="post-review">
@@ -379,7 +420,7 @@
       <li><div class="status-box status-404">404 Not Found: The provided ID does not match any favourite.</div></li>
     </ul>
       <h4>Example Request:</h4>
-      <pre><code>DELETE /api/favourite/17</code></pre>
+      <pre><code>DELETE /api/favourites/17</code></pre>
       <h4>Example Response:</h4>
       <em>no content</em>
       </section>

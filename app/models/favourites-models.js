@@ -23,7 +23,6 @@ async function addPropertyFavourite(id, propertyFavourite) {
   }
 
   try {
-    // Check if the user exists (it could be either a guest or host)
     const userCheck = await db.query("SELECT * FROM users WHERE user_id = $1", [
       guest_id,
     ]);
@@ -35,7 +34,6 @@ async function addPropertyFavourite(id, propertyFavourite) {
       });
     }
 
-    // Check if the property is already in the user's favourites
     const existingFavouriteCheck = await db.query(
       "SELECT * FROM favourites WHERE guest_id = $1 AND property_id = $2",
       [guest_id, id]
@@ -47,8 +45,6 @@ async function addPropertyFavourite(id, propertyFavourite) {
         msg: "This property is already in your favourites.",
       });
     }
-
-    // Add the property to the user's favourites
     const addedPropertyFavourite = await db.query(addPropertyFavouriteQuery, [
       id,
       guest_id,
