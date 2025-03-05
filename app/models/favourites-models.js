@@ -10,6 +10,16 @@ const { validateId } = require("./utils");
 async function fetchFavourites(id) {
   await validateId(id);
 
+  const userCheck = await db.query("SELECT * FROM users WHERE user_id = $1", [
+    id,
+  ]);
+  if (userCheck.rows.length === 0) {
+    return Promise.reject({
+      status: 400,
+      msg: `user with ID ${id} not found`,
+    });
+  }
+
   const favourites = await db.query(fetchFavouritesQuery, [id]);
 
   return favourites.rows;

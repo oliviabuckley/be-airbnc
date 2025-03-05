@@ -754,4 +754,62 @@ describe("app", () => {
       });
     });
   });
+  describe("/api/users/:id/favourites", () => {
+    describe("happy path", () => {
+      describe("GET", () => {
+        test("200 - responds with an array of favourites objects", () => {
+          const userId = 2;
+          return request(app)
+            .get(`/api/users/${userId}/favourites`)
+            .expect(200)
+            .then(({ body }) => {
+              console.log(body); //
+              expect(Array.isArray(body)).toBe(true);
+              body.forEach((favourite) => {
+                expect(typeof favourite).toBe("object");
+              });
+            });
+        });
+        test("each favourite object has the correct properties", () => {
+          const userId = 2;
+          return request(app)
+            .get(`/api/users/${userId}/favourites`)
+            .then(({ body }) => {
+              body.forEach((favourite) => {
+                expect(favourite).toHaveProperty("favourite_id");
+                expect(favourite).toHaveProperty("property_id");
+                expect(favourite).toHaveProperty("host_id");
+                expect(favourite).toHaveProperty("name");
+                expect(favourite).toHaveProperty("location");
+                expect(favourite).toHaveProperty("property_type");
+                expect(favourite).toHaveProperty("price_per_night");
+                expect(favourite).toHaveProperty("description");
+              });
+            });
+        });
+      });
+    });
+    describe("sad path", () => {
+      describe("GET", () => {
+        test("404 - user does not exist", () => {
+          const userId = 10000000;
+          return request(app)
+            .get(`/api/users/${userId}/favourites`)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`user with ID ${userId} not found`);
+            });
+        });
+        test("200 - no favourites for this user (empty array)", () => {
+          const userId = 1;
+          return request(app)
+            .get(`/api/users/${userId}/favourites`)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toEqual([]);
+            });
+        });
+      });
+    });
+  });
 });
